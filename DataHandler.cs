@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using FileSystem.Descriptors;
@@ -50,13 +49,11 @@ namespace FileSystem
                 Data[descriptor.Path][blockIndex] =
                     new string(char.MinValue, BlockSize);
             }
-            
+
             for (var i = 0; i < blockNumber; i++)
             {
                 if (Data[descriptor.Path][blockIndex + i] == null)
-                {
                     descriptor.IncreaseNblock();
-                }
                 Data[descriptor.Path][blockIndex + i] =
                     text.Substring(BlockSize * i, BlockSize);
             }
@@ -67,10 +64,14 @@ namespace FileSystem
                 Data[descriptor.Path][blockIndex + blockNumber] =
                     new string(char.MinValue, BlockSize);
             }
+
             Data[descriptor.Path][blockIndex + blockNumber] =
-                Data[descriptor.Path][blockIndex + blockNumber].Remove(blockOffset, size % BlockSize);
+                Data[descriptor.Path][blockIndex + blockNumber]
+                    .Remove(blockOffset, size % BlockSize);
             Data[descriptor.Path][blockIndex + blockNumber] =
-                Data[descriptor.Path][blockIndex + blockNumber].Insert(blockOffset, text.Substring(BlockSize*blockNumber, size % BlockSize));
+                Data[descriptor.Path][blockIndex + blockNumber].Insert(
+                    blockOffset,
+                    text.Substring(BlockSize * blockNumber, size % BlockSize));
 
             File.WriteAllText(FileName, JsonSerializer.Serialize(Data));
         }
@@ -86,7 +87,7 @@ namespace FileSystem
                 result += "[" + Data[descriptor.Path][i] + "]";
 
             if (size % BlockSize != 0)
-                result += "[" + Data[descriptor.Path][blockIndex+blockNumber]
+                result += "[" + Data[descriptor.Path][blockIndex + blockNumber]
                     .Substring(blockOffset, size % BlockSize) + "]";
             return result;
         }

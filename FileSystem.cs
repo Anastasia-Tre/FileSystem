@@ -18,8 +18,9 @@ namespace FileSystem
             _descriptors = new Dictionary<string, ObjectDescriptor>
             {
                 {
-                    ".", new DirDescriptor(".", ".") // add default root directory
-                } 
+                    ".",
+                    new DirDescriptor(".", ".") // add default root directory
+                }
             };
 
             CWD = (DirDescriptor)_descriptors["."];
@@ -59,6 +60,7 @@ namespace FileSystem
                     "Cannot create new directory. Too long file name.");
                 return;
             }
+
             if (_descriptors.Count >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
@@ -159,6 +161,7 @@ namespace FileSystem
                 Console.WriteLine($"No open file with fd = {fd}");
                 return;
             }
+
             fileHandler.CloseFile(fd);
             Console.WriteLine($"The file with fd = {fd} was closed");
         }
@@ -171,6 +174,7 @@ namespace FileSystem
                 Console.WriteLine($"No open file with fd = {fd}");
                 return;
             }
+
             fileHandler.Seek(offset);
             Console.WriteLine(
                 $"The file with fd = {fd} was seeked to {offset}");
@@ -184,6 +188,7 @@ namespace FileSystem
                 Console.WriteLine($"No open file with fd = {fd}");
                 return;
             }
+
             var result = fileHandler.Read(size);
             Console.WriteLine($"The file with fd = {fd} was read: {result}");
         }
@@ -196,6 +201,7 @@ namespace FileSystem
                 Console.WriteLine($"No open file with fd = {fd}");
                 return;
             }
+
             fileHandler.Write(size, str);
             Console.WriteLine($"To the file with fd = {fd} was written: {str}");
         }
