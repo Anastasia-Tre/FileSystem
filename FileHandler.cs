@@ -5,7 +5,7 @@ namespace FileSystem
 {
     internal class FileHandler
     {
-        private const int MaxFileHandlersNumber = 1;
+        private const int MaxFileHandlersNumber = 10;
 
         private static readonly FileHandler[] FileHandlers =
             new FileHandler[MaxFileHandlersNumber];
@@ -32,17 +32,16 @@ namespace FileSystem
             _descriptor.OpenFileHandler();
         }
 
-        public static void CloseFile(int fd)
-        {
-            FileHandlers[fd]._descriptor.CloseFileHandler();
-            if (FileHandlers[fd]._descriptor.CanBeRemoved())
-                DataHandler.Remove(FileHandlers[fd]._descriptor);
-            FileHandlers[fd] = null;
-        }
-
         public static FileHandler GetFileHandlerById(int id)
         {
-            return FileHandlers[id];
+            try
+            {
+                return FileHandlers[id];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static void CreateFile(FileDescriptor descriptor)
@@ -53,6 +52,14 @@ namespace FileSystem
         public static void RemoveFile(FileDescriptor descriptor)
         {
             DataHandler.Remove(descriptor);
+        }
+
+        public void CloseFile(int fd)
+        {
+            FileHandlers[fd]._descriptor.CloseFileHandler();
+            if (FileHandlers[fd]._descriptor.CanBeRemoved())
+                DataHandler.Remove(FileHandlers[fd]._descriptor);
+            FileHandlers[fd] = null;
         }
 
         public void Seek(int offset)
