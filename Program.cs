@@ -39,7 +39,7 @@ namespace FileSystem
             fs.Read(fd, 2);
 
             fs.Seek(fd, 256);
-            fs.Write(fd, 7, "abcdfg");
+            fs.Write(fd, 6, "abcdfg");
 
             fs.Seek(fd, 0);
             fs.Read(fd, 384);
