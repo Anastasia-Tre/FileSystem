@@ -53,7 +53,7 @@ namespace FileSystem
         public void CreateFile(string name)
         {
             var path = $"{CWD.Name}/{name}";
-            if (_maxFileNameLength > name.Length)
+            if (_maxFileNameLength < name.Length)
             {
                 Console.WriteLine(
                     "Cannot create new directory. Too long file name.");
@@ -153,26 +153,50 @@ namespace FileSystem
 
         public void CloseFile(int fd)
         {
-            FileHandler.CloseFile(fd);
+            var fileHandler = FileHandler.GetFileHandlerById(fd);
+            if (fileHandler == null)
+            {
+                Console.WriteLine($"No open file with fd = {fd}");
+                return;
+            }
+            fileHandler.CloseFile(fd);
             Console.WriteLine($"The file with fd = {fd} was closed");
         }
 
         public void Seek(int fd, int offset)
         {
-            FileHandler.GetFileHandlerById(fd).Seek(offset);
+            var fileHandler = FileHandler.GetFileHandlerById(fd);
+            if (fileHandler == null)
+            {
+                Console.WriteLine($"No open file with fd = {fd}");
+                return;
+            }
+            fileHandler.Seek(offset);
             Console.WriteLine(
                 $"The file with fd = {fd} was seeked to {offset}");
         }
 
         public void Read(int fd, int size)
         {
-            var result = FileHandler.GetFileHandlerById(fd).Read(size);
+            var fileHandler = FileHandler.GetFileHandlerById(fd);
+            if (fileHandler == null)
+            {
+                Console.WriteLine($"No open file with fd = {fd}");
+                return;
+            }
+            var result = fileHandler.Read(size);
             Console.WriteLine($"The file with fd = {fd} was read: {result}");
         }
 
         public void Write(int fd, int size, string str)
         {
-            FileHandler.GetFileHandlerById(fd).Write(size, str);
+            var fileHandler = FileHandler.GetFileHandlerById(fd);
+            if (fileHandler == null)
+            {
+                Console.WriteLine($"No open file with fd = {fd}");
+                return;
+            }
+            fileHandler.Write(size, str);
             Console.WriteLine($"To the file with fd = {fd} was written: {str}");
         }
     }
