@@ -134,7 +134,7 @@ namespace FileSystem
             Console.WriteLine($"The size of file {name} was changed");
         }
 
-        public int OpenFile(string name)
+        public FileHandler OpenFile(string name)
         {
             var path = $"{CWD.Name}/{name}";
             try
@@ -142,62 +142,14 @@ namespace FileSystem
                 var fd = new FileHandler((FileDescriptor)_descriptors[path]);
                 Console.WriteLine(
                     $"The file {name} was opened with fd = {fd.Id}");
-                return fd.Id;
+                return fd;
             }
             catch (Exception)
             {
                 Console.WriteLine("No empty file handlers");
-                return -1;
+                return null;
             }
         }
 
-        public void CloseFile(int fd)
-        {
-            var fileHandler = FileHandler.GetFileHandlerById(fd);
-            if (fileHandler == null)
-            {
-                Console.WriteLine($"No open file with fd = {fd}");
-                return;
-            }
-            fileHandler.CloseFile(fd);
-            Console.WriteLine($"The file with fd = {fd} was closed");
-        }
-
-        public void Seek(int fd, int offset)
-        {
-            var fileHandler = FileHandler.GetFileHandlerById(fd);
-            if (fileHandler == null)
-            {
-                Console.WriteLine($"No open file with fd = {fd}");
-                return;
-            }
-            fileHandler.Seek(offset);
-            Console.WriteLine(
-                $"The file with fd = {fd} was seeked to {offset}");
-        }
-
-        public void Read(int fd, int size)
-        {
-            var fileHandler = FileHandler.GetFileHandlerById(fd);
-            if (fileHandler == null)
-            {
-                Console.WriteLine($"No open file with fd = {fd}");
-                return;
-            }
-            var result = fileHandler.Read(size);
-            Console.WriteLine($"The file with fd = {fd} was read: {result}");
-        }
-
-        public void Write(int fd, int size, string str)
-        {
-            var fileHandler = FileHandler.GetFileHandlerById(fd);
-            if (fileHandler == null)
-            {
-                Console.WriteLine($"No open file with fd = {fd}");
-                return;
-            }
-            fileHandler.Write(size, str);
-            Console.WriteLine($"To the file with fd = {fd} was written: {str}");
-        }
     }
 }

@@ -32,18 +32,6 @@ namespace FileSystem
             _descriptor.OpenFileHandler();
         }
 
-        public static FileHandler GetFileHandlerById(int id)
-        {
-            try
-            {
-                return FileHandlers[id];
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public static void CreateFile(FileDescriptor descriptor)
         {
             DataHandler.Create(descriptor);
@@ -54,28 +42,33 @@ namespace FileSystem
             DataHandler.Remove(descriptor);
         }
 
-        public void CloseFile(int fd)
+        public void CloseFile()
         {
-            FileHandlers[fd]._descriptor.CloseFileHandler();
-            if (FileHandlers[fd]._descriptor.CanBeRemoved())
-                DataHandler.Remove(FileHandlers[fd]._descriptor);
-            FileHandlers[fd] = null;
+            FileHandlers[Id]._descriptor.CloseFileHandler();
+            if (FileHandlers[Id]._descriptor.CanBeRemoved())
+                DataHandler.Remove(FileHandlers[Id]._descriptor);
+            FileHandlers[Id] = null;
+            Console.WriteLine($"The file with fd = {Id} was closed");
         }
 
         public void Seek(int offset)
         {
             _currentPosition = offset;
+            Console.WriteLine(
+                $"The file with fd = {Id} was seeked to {offset}");
         }
 
         public string Read(int size)
         {
             var result = DataHandler.Read(_descriptor, _currentPosition, size);
+            Console.WriteLine($"The file with fd = {Id} was read: {result}");
             return result;
         }
 
         public void Write(int size, string str)
         {
             DataHandler.Write(_descriptor, str, _currentPosition, size);
+            Console.WriteLine($"To the file with fd = {Id} was written: {str}");
         }
     }
 }

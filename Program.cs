@@ -30,29 +30,29 @@ namespace FileSystem
 
 
             Console.WriteLine();
-            var fd = fs.OpenFile(filename2);
+            var fileHandler = fs.OpenFile(filename2);
 
-            fs.Write(fd, 10, "0123456789");
+            fileHandler.Write(10, "0123456789");
             fs.ShowStat(filename2);
 
-            fs.Seek(fd, 7);
-            fs.Read(fd, 2);
+            fileHandler.Seek(7);
+            fileHandler.Read(2);
 
-            fs.Seek(fd, 256);
-            fs.Write(fd, 7, "abcdfg");
+            fileHandler.Seek(256);
+            fileHandler.Write(7, "abcdfg");
 
-            fs.Seek(fd, 0);
-            fs.Read(fd, 384);
+            fileHandler.Seek(0);
+            fileHandler.Read(384);
             fs.ShowStat(filename2);
 
 
             Console.WriteLine();
             fs.Unlink(filename2);
             fs.Ls();
-            fs.Seek(fd, 0);
-            fs.Read(fd, 10);
+            fileHandler.Seek(0);
+            fileHandler.Read(10);
 
-            fs.CloseFile(fd);
+            fileHandler.CloseFile();
 
         }
     }
