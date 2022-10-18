@@ -24,7 +24,7 @@ namespace FileSystem
             };
 
             CWD = (DirDescriptor)_descriptors["."];
-            Console.WriteLine("The file system was created\n");
+            Console.WriteLine("The file system was created");
         }
 
         public void MakeDir(string name)
@@ -101,7 +101,7 @@ namespace FileSystem
             try
             {
                 Console.WriteLine(
-                    $"Information for {path}: {_descriptors[path].Stat()}");
+                    $"Information for {path}:\n    {_descriptors[path].Stat()}");
             }
             catch (KeyNotFoundException)
             {
@@ -177,7 +177,7 @@ namespace FileSystem
 
             fileHandler.Seek(offset);
             Console.WriteLine(
-                $"The file with fd = {fd} was seeked to {offset}");
+                $"The offset of file with fd = {fd} was moved to {offset}");
         }
 
         public void Read(int fd, int size)
