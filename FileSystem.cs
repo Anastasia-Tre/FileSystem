@@ -7,7 +7,7 @@ namespace FileSystem
 {
     internal class FileSystem
     {
-        private readonly Dictionary<int, ObjectDescriptor> _descriptors;
+        private readonly List<ObjectDescriptor> _descriptors;
         private readonly int _maxDescriptorsNumber;
         private readonly int _maxFileNameLength = 128;
 
@@ -17,13 +17,7 @@ namespace FileSystem
         {
             _maxDescriptorsNumber = maxDescrNumber;
             var rootDir = new DirDescriptor(".", ".");
-            _descriptors = new Dictionary<int, ObjectDescriptor>
-            {
-                {
-                    rootDir.Id,
-                    rootDir
-                }
-            };
+            _descriptors = new List<ObjectDescriptor> { rootDir };
 
             //CWD = (DirDescriptor)_descriptors[rootDir.Id];
             CWD = rootDir;
@@ -43,7 +37,7 @@ namespace FileSystem
             try
             {
                 var dir = new DirDescriptor(name, path);
-                _descriptors.Add(dir.Id, dir);
+                _descriptors.Add(dir);
             }
             catch (ArgumentException)
             {
@@ -75,7 +69,7 @@ namespace FileSystem
             try
             {
                 var descriptor = new FileDescriptor(name, path);
-                _descriptors.Add(descriptor.Id, descriptor);
+                _descriptors.Add(descriptor);
                 FileHandler.CreateFile(descriptor);
             }
             catch (ArgumentException)
@@ -91,7 +85,7 @@ namespace FileSystem
         {
             var dirname = $"{CWD.Name}/{name}";
             Console.WriteLine($"List of objects in directory {dirname}");
-            foreach (var obj in _descriptors.Values)
+            foreach (var obj in _descriptors)
             foreach (var link in obj.Links)
                 if (link.StartsWith(dirname))
                     Console.WriteLine(
@@ -115,7 +109,7 @@ namespace FileSystem
 
         private ObjectDescriptor GetDescriptorByPath(string path)
         {
-            return _descriptors.Values.First(obj => obj.Links.Contains(path));
+            return _descriptors.First(obj => obj.Links.Contains(path));
         }
 
         public void Link(string name1, string name2)
@@ -135,7 +129,7 @@ namespace FileSystem
             if (descriptor.CanBeRemoved())
             {
                 FileHandler.RemoveFile(descriptor);
-                _descriptors.Remove(descriptor.Id);
+                _descriptors.Remove(descriptor);
             }
 
             Console.WriteLine($"The file {name} was unlinked");
