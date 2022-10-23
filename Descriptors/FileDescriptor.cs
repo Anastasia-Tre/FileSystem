@@ -7,22 +7,11 @@
         public FileDescriptor(string name, string path) : base(name, path)
         {
             Type = ObjectDescriptors.FileDescriptor;
-            Nlink++;
         }
 
         public void Truncate(int size)
         {
             Size = size;
-        }
-
-        public int IncreaseNlink()
-        {
-            return Nlink++;
-        }
-
-        public int DecreaseNlink()
-        {
-            return Nlink--;
         }
 
         public int IncreaseNblock()
@@ -42,7 +31,7 @@
 
         public bool CanBeRemoved()
         {
-            return _openFileHandlersNumber == 0 && Nlink == 0;
+            return _openFileHandlersNumber == 0 && Links.Count == 0;
         }
     }
 }
