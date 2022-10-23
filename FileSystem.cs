@@ -16,10 +16,9 @@ namespace FileSystem
         public FileSystem(int maxDescrNumber)
         {
             _maxDescriptorsNumber = maxDescrNumber;
-            var rootDir = new DirDescriptor(".", ".");
+            var rootDir = new DirDescriptor("", "", null);
             _descriptors = new List<ObjectDescriptor> { rootDir };
-
-            //CWD = (DirDescriptor)_descriptors[rootDir.Id];
+            
             CWD = rootDir;
             Console.WriteLine("The file system was created");
         }
@@ -36,7 +35,7 @@ namespace FileSystem
 
             try
             {
-                var dir = new DirDescriptor(name, path);
+                var dir = new DirDescriptor(name, path, CWD);
                 _descriptors.Add(dir);
             }
             catch (ArgumentException)
@@ -122,7 +121,7 @@ namespace FileSystem
                 }
             }
 
-            throw new Exception("No such object in file system");
+            throw new Exception("No such object in file system"); // replace
         }
 
         public void Link(string name1, string name2)
