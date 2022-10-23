@@ -8,6 +8,7 @@
         {
             Type = ObjectDescriptors.DirDescriptor;
             _parentDir = parentDir;
+            if (parentDir != null) parentDir.Nlink++;
             Nlink += 2;
         }
     }

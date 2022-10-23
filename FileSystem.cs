@@ -16,16 +16,38 @@ namespace FileSystem
         public FileSystem(int maxDescrNumber)
         {
             _maxDescriptorsNumber = maxDescrNumber;
-            var rootDir = new DirDescriptor("", "", null);
+            var rootDir = new DirDescriptor("/", "/", null);
             _descriptors = new List<ObjectDescriptor> { rootDir };
             
             CWD = rootDir;
             Console.WriteLine("The file system was created");
         }
 
+        private ObjectDescriptor GetDescriptorByPath(string path)
+        {
+            foreach (var obj in _descriptors)
+            {
+                if (obj is FileDescriptor fileDescriptor)
+                {
+                    if (fileDescriptor.Links.Contains(path)) return obj;
+                } else
+                {
+                    if (obj.Path == path) return obj;
+                }
+            }
+
+            throw new Exception("No such object in file system"); // replace
+        }
+
+        private string GetPath(string name)
+        {
+            if (name.StartsWith('/')) return name;
+            return CWD.Path == "/" ? $"/{name}" : $"{CWD.Path}/{name}";
+        }
+
         public void MakeDir(string name)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
             if (_descriptors.Count >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
@@ -50,7 +72,7 @@ namespace FileSystem
 
         public void CreateFile(string name)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
             if (_maxFileNameLength < name.Length)
             {
                 Console.WriteLine(
@@ -80,62 +102,55 @@ namespace FileSystem
             Console.WriteLine($"The file {name} was created");
         }
 
-        public void Ls(string name = "")
+        public void Ls(string name = "/")
         {
-            var dirname = $"{CWD.Name}/{name}";
+            var dirname = GetPath(name);
             Console.WriteLine($"List of objects in directory {dirname}");
             foreach (var obj in _descriptors)
+            {
                 if (obj is FileDescriptor fileDescriptor)
+                {
                     foreach (var link in fileDescriptor.Links)
                         if (link.StartsWith(dirname))
-                            Console.WriteLine(
-                                $"{obj.Type},{obj.Id}   =>   {link}");
+                            Console.WriteLine($"{obj.Type},{obj.Id}   =>   {link}");
+                }
+                else
+                {
+                    if (obj.Path.StartsWith(dirname))
+                        Console.WriteLine($"{obj.Type},{obj.Id}   =>   {obj.Path}");
+                }
+            }
         }
 
         public void ShowStat(string name)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
+            Console.WriteLine($"path = {path}");
             try
             {
                 var descriptor = GetDescriptorByPath(path);
                 Console.WriteLine(
                     $"Information for {path}:\n    {descriptor.Stat()}");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine($"No file with the name {name} in system");
+                Console.WriteLine(e);
+                Console.WriteLine($"No object with the name {name} in system");
             }
-        }
-
-        private ObjectDescriptor GetDescriptorByPath(string path)
-        {
-            foreach (var obj in _descriptors)
-            {
-                if (obj is FileDescriptor fileDescriptor)
-                {
-                    if (fileDescriptor.Links.Contains(path)) return obj;
-                }
-                else
-                {
-                    if(obj.Path == path) return obj;
-                }
-            }
-
-            throw new Exception("No such object in file system"); // replace
         }
 
         public void Link(string name1, string name2)
         {
-            var path1 = $"{CWD.Name}/{name1}";
+            var path1 = GetPath(name1);
             var descriptor = (FileDescriptor)GetDescriptorByPath(path1);
-            var path2 = $"{CWD.Name}/{name2}";
+            var path2 = GetPath(name2);
             descriptor.AddLink(path2);
             Console.WriteLine($"The link {name2} was created");
         }
 
         public void Unlink(string name)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
             var descriptor = (FileDescriptor)GetDescriptorByPath(path);
             descriptor.RemoveLink(path);
             if (descriptor.CanBeRemoved())
@@ -149,14 +164,14 @@ namespace FileSystem
 
         public void Truncate(string name, int size)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
             ((FileDescriptor)GetDescriptorByPath(path)).Truncate(size);
             Console.WriteLine($"The size of file {name} was changed");
         }
 
         public FileHandler OpenFile(string name)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
             try
             {
                 var descriptor = (FileDescriptor)GetDescriptorByPath(path);
@@ -172,10 +187,9 @@ namespace FileSystem
             }
         }
 
-
         public DirDescriptor Cd(string name)
         {
-            var path = $"{CWD.Name}/{name}";
+            var path = GetPath(name);
             var dir = GetDescriptorByPath(path);
             CWD = (DirDescriptor)dir;
             Console.WriteLine($"Change CWD to {path}");
