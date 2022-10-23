@@ -64,18 +64,18 @@ namespace FileSystem
             Console.WriteLine();
             fs.CreateFile("file.txt");
             fs.Link("file.txt", "document.txt");
-            fs.OpenFile("file.txt");
-            fs.Write(0, 10, "0123456789");
-            fs.CloseFile(0);
+            var fh = fs.OpenFile("file.txt");
+            fh.Write(10, "0123456789");
+            fh.CloseFile();
             fs.Ls();
             fs.Unlink("file.txt");
             fs.Ls();
             fs.CreateFile("file.txt");
-            fs.OpenFile("file.txt");
-            fs.Write(0, 10, "abcdefghij");
-            fs.CloseFile(0);
-            fs.OpenFile("document.txt");
-            fs.Read(0, 10);
+            fh = fs.OpenFile("file.txt");
+            fh.Write(10, "abcdefghij");
+            fh.CloseFile();
+            fh = fs.OpenFile("document.txt");
+            fh.Read( 10);
             fs.Ls();
 
         }

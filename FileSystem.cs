@@ -143,7 +143,7 @@ namespace FileSystem
             {
                 var fd = new FileHandler((FileDescriptor)_descriptors[path]);
                 Console.WriteLine(
-                    $"The file {name} was opened with fd = {fd.Id}");
+                    $"The file {name} was opened");
                 return fd;
             }
             catch (Exception)

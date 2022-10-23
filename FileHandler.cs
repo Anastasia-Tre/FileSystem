@@ -14,17 +14,19 @@ namespace FileSystem
         private readonly FileDescriptor _descriptor;
         private int _currentPosition;
 
+        private readonly int _id = -1;
+
         public FileHandler(FileDescriptor descriptor)
         {
             for (var i = 0; i < MaxFileHandlersNumber; i++)
                 if (FileHandlers[i] == null)
                 {
                     FileHandlers[i] = this;
-                    Id = i;
+                    _id = i;
                     break;
                 }
 
-            if (Id == -1) throw new Exception();
+            if (_id == -1) throw new Exception();
             _descriptor = descriptor;
             _descriptor.OpenFileHandler();
         }
@@ -41,31 +43,31 @@ namespace FileSystem
 
         public void CloseFile()
         {
-            FileHandlers[Id]._descriptor.CloseFileHandler();
-            if (FileHandlers[Id]._descriptor.CanBeRemoved())
-                DataHandler.Remove(FileHandlers[Id]._descriptor);
-            FileHandlers[Id] = null;
-            Console.WriteLine($"The file with fd = {Id} was closed");
+            FileHandlers[_id]._descriptor.CloseFileHandler();
+            if (FileHandlers[_id]._descriptor.CanBeRemoved())
+                DataHandler.Remove(FileHandlers[_id]._descriptor);
+            FileHandlers[_id] = null;
+            Console.WriteLine($"The file with fd = {_id} was closed");
         }
 
         public void Seek(int offset)
         {
             _currentPosition = offset;
             Console.WriteLine(
-                $"The file with fd = {Id} was seeked to {offset}");
+                $"The file with fd = {_id} was seeked to {offset}");
         }
 
         public string Read(int size)
         {
             var result = DataHandler.Read(_descriptor, _currentPosition, size);
-            Console.WriteLine($"The file with fd = {Id} was read: {result}");
+            Console.WriteLine($"The file with fd = {_id} was read: {result}");
             return result;
         }
 
         public void Write(int size, string str)
         {
             DataHandler.Write(_descriptor, str, _currentPosition, size);
-            Console.WriteLine($"To the file with fd = {Id} was written: {str}");
+            Console.WriteLine($"To the file with fd = {_id} was written: {str}");
         }
     }
 }
