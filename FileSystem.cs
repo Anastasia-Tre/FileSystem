@@ -18,12 +18,13 @@ namespace FileSystem
             _descriptors = new Dictionary<string, ObjectDescriptor>
             {
                 {
-                    ".", new DirDescriptor(".", ".") // add default root directory
-                } 
+                    ".",
+                    new DirDescriptor(".", ".") // add default root directory
+                }
             };
 
             CWD = (DirDescriptor)_descriptors["."];
-            Console.WriteLine("The file system was created\n");
+            Console.WriteLine("The file system was created");
         }
 
         public void MakeDir(string name)
@@ -59,6 +60,7 @@ namespace FileSystem
                     "Cannot create new directory. Too long file name.");
                 return;
             }
+
             if (_descriptors.Count >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
@@ -99,7 +101,7 @@ namespace FileSystem
             try
             {
                 Console.WriteLine(
-                    $"Information for {path}: {_descriptors[path].Stat()}");
+                    $"Information for {path}:\n    {_descriptors[path].Stat()}");
             }
             catch (KeyNotFoundException)
             {
@@ -150,6 +152,5 @@ namespace FileSystem
                 return null;
             }
         }
-
     }
 }

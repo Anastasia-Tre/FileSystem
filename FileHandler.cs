@@ -14,19 +14,16 @@ namespace FileSystem
         private readonly FileDescriptor _descriptor;
         private int _currentPosition;
 
-        public int Id { get; } = -1;
-
         public FileHandler(FileDescriptor descriptor)
         {
             for (var i = 0; i < MaxFileHandlersNumber; i++)
-            {
                 if (FileHandlers[i] == null)
                 {
                     FileHandlers[i] = this;
                     Id = i;
                     break;
                 }
-            }
+
             if (Id == -1) throw new Exception();
             _descriptor = descriptor;
             _descriptor.OpenFileHandler();

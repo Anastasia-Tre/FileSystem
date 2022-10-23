@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="FileSystem.DataHandler">
+    <Position X="13.5" Y="0.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAgAAAAAFAAAAAAACFAAAA=</HashCode>
+      <FileName>DataHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileSystem.FileHandler">
+    <Position X="10.25" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AABCAAAAAAAAAAAACCQACIAoAAAAAAAAAAAAAAEAABA=</HashCode>
+      <FileName>FileHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileSystem.FileSystem">
+    <Position X="6.5" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AEACAAAAAAAAAAAAAASAAAEAAAADAkAAAAAUQAAAAAA=</HashCode>
+      <FileName>FileSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

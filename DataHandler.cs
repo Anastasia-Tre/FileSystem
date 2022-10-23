@@ -36,10 +36,11 @@ namespace FileSystem
         {
             var blockIndex = offset / BlockSize;
             var blockOffset = offset % BlockSize;
+            var blockNumber = size / BlockSize;
             var count = Data[descriptor.Path].Count;
 
             if (count <= blockIndex)
-                for (var i = 0; i <= blockIndex - count; i++)
+                for (var i = 0; i <= blockIndex - count + blockNumber; i++)
                     Data[descriptor.Path].Add(null);
 
             if (Data[descriptor.Path][blockIndex] == null)
@@ -49,8 +50,29 @@ namespace FileSystem
                     new string(char.MinValue, BlockSize);
             }
 
-            Data[descriptor.Path][blockIndex] =
-                Data[descriptor.Path][blockIndex].Insert(blockOffset, text);
+            for (var i = 0; i < blockNumber; i++)
+            {
+                if (Data[descriptor.Path][blockIndex + i] == null)
+                    descriptor.IncreaseNblock();
+                Data[descriptor.Path][blockIndex + i] =
+                    text.Substring(BlockSize * i, BlockSize);
+            }
+
+            if (Data[descriptor.Path][blockIndex + blockNumber] == null)
+            {
+                descriptor.IncreaseNblock();
+                Data[descriptor.Path][blockIndex + blockNumber] =
+                    new string(char.MinValue, BlockSize);
+            }
+
+            Data[descriptor.Path][blockIndex + blockNumber] =
+                Data[descriptor.Path][blockIndex + blockNumber]
+                    .Remove(blockOffset, size % BlockSize);
+            Data[descriptor.Path][blockIndex + blockNumber] =
+                Data[descriptor.Path][blockIndex + blockNumber].Insert(
+                    blockOffset,
+                    text.Substring(BlockSize * blockNumber, size % BlockSize));
+
             File.WriteAllText(FileName, JsonSerializer.Serialize(Data));
         }
 
@@ -65,7 +87,7 @@ namespace FileSystem
                 result += "[" + Data[descriptor.Path][i] + "]";
 
             if (size % BlockSize != 0)
-                result += "[" + Data[descriptor.Path][blockIndex]
+                result += "[" + Data[descriptor.Path][blockIndex + blockNumber]
                     .Substring(blockOffset, size % BlockSize) + "]";
             return result;
         }
