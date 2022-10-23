@@ -47,27 +47,27 @@ namespace FileSystem
             if (FileHandlers[_id]._descriptor.CanBeRemoved())
                 DataHandler.Remove(FileHandlers[_id]._descriptor);
             FileHandlers[_id] = null;
-            Console.WriteLine($"The file with fd = {_id} was closed");
+            Console.WriteLine($"The file with Id = {_descriptor.Id} was closed");
         }
 
         public void Seek(int offset)
         {
             _currentPosition = offset;
             Console.WriteLine(
-                $"The file with fd = {_id} was seeked to {offset}");
+                $"The file with Id = {_descriptor.Id} was seeked to {offset}");
         }
 
         public string Read(int size)
         {
             var result = DataHandler.Read(_descriptor, _currentPosition, size);
-            Console.WriteLine($"The file with fd = {_id} was read: {result}");
+            Console.WriteLine($"The file with Id = {_descriptor.Id} was read: {result}");
             return result;
         }
 
         public void Write(int size, string str)
         {
             DataHandler.Write(_descriptor, str, _currentPosition, size);
-            Console.WriteLine($"To the file with fd = {_id} was written: {str}");
+            Console.WriteLine($"To the file with Id = {_descriptor.Id} was written: {str}");
         }
     }
 }

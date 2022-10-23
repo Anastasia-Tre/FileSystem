@@ -1,18 +1,21 @@
-﻿namespace FileSystem.Descriptors
+﻿using System.Collections.Generic;
+
+namespace FileSystem.Descriptors
 {
     internal class ObjectDescriptor
     {
         protected static int NextId = 1;
         protected int Nblock = 0;
-
-        protected int Nlink = 0;
         protected int Size = 0;
+
+        public List<string> Links;
 
         public ObjectDescriptor(string name, string path)
         {
             Id = NextId++;
             Name = name;
             Path = path;
+            Links = new List<string> { path };
         }
 
         public ObjectDescriptors Type { get; protected set; }
@@ -23,7 +26,17 @@
         public string Stat()
         {
             return $"id={Id}, type={Type}, " +
-                   $"nlink={Nlink}, size={Size}, nblock={Nblock}";
+                   $"nlink={Links.Count}, size={Size}, nblock={Nblock}";
+        }
+
+        public void AddLink(string path)
+        {
+            Links.Add(path);
+        }
+
+        public void RemoveLink(string path)
+        {
+            Links.Remove(path);
         }
     }
 }

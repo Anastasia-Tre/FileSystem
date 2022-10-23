@@ -7,7 +7,7 @@ namespace FileSystem
         private static void Main(string[] args)
         {
             var fs = new FileSystem(10);
-            /*
+            
             Console.WriteLine();
             var filename = "file.txt";
             fs.CreateFile(filename);
@@ -42,7 +42,7 @@ namespace FileSystem
 
             Console.WriteLine();
             fileHandler.Seek(256);
-            fileHandler.Write(7, "abcdfg");
+            fileHandler.Write(7, "abcdefg");
 
             Console.WriteLine();
             fileHandler.Seek(0);
@@ -59,8 +59,9 @@ namespace FileSystem
 
             Console.WriteLine();
             fileHandler.CloseFile();
-            */
             
+            
+            /*
             Console.WriteLine();
             fs.CreateFile("file.txt");
             fs.Link("file.txt", "document.txt");
@@ -77,7 +78,7 @@ namespace FileSystem
             fh = fs.OpenFile("document.txt");
             fh.Read( 10);
             fs.Ls();
-
+            */
         }
     }
 }
