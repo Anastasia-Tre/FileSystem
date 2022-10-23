@@ -85,6 +85,7 @@ namespace FileSystem
             fs.MakeDir("dir1");
             fs.ShowStat("dir1");
 
+            fs.Cd("dir1");
 
         }
     }

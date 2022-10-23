@@ -54,7 +54,7 @@ namespace FileSystem
             if (_maxFileNameLength < name.Length)
             {
                 Console.WriteLine(
-                    "Cannot create new directory. Too long file name.");
+                    "Cannot create new file. Too long file name.");
                 return;
             }
 
@@ -170,6 +170,16 @@ namespace FileSystem
                 Console.WriteLine("No empty file handlers");
                 return null;
             }
+        }
+
+
+        public DirDescriptor Cd(string name)
+        {
+            var path = $"{CWD.Name}/{name}";
+            var dir = GetDescriptorByPath(path);
+            CWD = (DirDescriptor)dir;
+            Console.WriteLine($"Change CWD to {path}");
+            return CWD;
         }
     }
 }
