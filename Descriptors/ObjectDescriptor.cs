@@ -6,7 +6,7 @@ namespace FileSystem.Descriptors
     {
         protected static int NextId = 1;
 
-        public List<string> Links;
+        protected int Nlink;
         protected int Nblock = 0;
         protected int Size = 0;
 
@@ -15,7 +15,6 @@ namespace FileSystem.Descriptors
             Id = NextId++;
             Name = name;
             Path = path;
-            Links = new List<string> { path };
         }
 
         public ObjectDescriptors Type { get; protected set; }
@@ -26,17 +25,7 @@ namespace FileSystem.Descriptors
         public string Stat()
         {
             return $"id={Id}, type={Type}, " +
-                   $"nlink={Links.Count}, size={Size}, nblock={Nblock}";
-        }
-
-        public void AddLink(string path)
-        {
-            Links.Add(path);
-        }
-
-        public void RemoveLink(string path)
-        {
-            Links.Remove(path);
+                   $"nlink={Nlink}, size={Size}, nblock={Nblock}";
         }
     }
 }

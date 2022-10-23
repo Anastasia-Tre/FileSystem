@@ -86,10 +86,11 @@ namespace FileSystem
             var dirname = $"{CWD.Name}/{name}";
             Console.WriteLine($"List of objects in directory {dirname}");
             foreach (var obj in _descriptors)
-            foreach (var link in obj.Links)
-                if (link.StartsWith(dirname))
-                    Console.WriteLine(
-                        $"{obj.Type},{obj.Id}   =>   {link}");
+                if (obj is FileDescriptor fileDescriptor)
+                    foreach (var link in fileDescriptor.Links)
+                        if (link.StartsWith(dirname))
+                            Console.WriteLine(
+                                $"{obj.Type},{obj.Id}   =>   {link}");
         }
 
         public void ShowStat(string name)
@@ -109,7 +110,19 @@ namespace FileSystem
 
         private ObjectDescriptor GetDescriptorByPath(string path)
         {
-            return _descriptors.First(obj => obj.Links.Contains(path));
+            foreach (var obj in _descriptors)
+            {
+                if (obj is FileDescriptor fileDescriptor)
+                {
+                    if (fileDescriptor.Links.Contains(path)) return obj;
+                }
+                else
+                {
+                    if(obj.Path == path) return obj;
+                }
+            }
+
+            throw new Exception("No such object in file system");
         }
 
         public void Link(string name1, string name2)
