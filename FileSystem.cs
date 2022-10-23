@@ -92,16 +92,10 @@ namespace FileSystem
             var dirname = $"{CWD.Name}/{name}";
             Console.WriteLine($"List of objects in directory {dirname}");
             foreach (var obj in _descriptors.Values)
-            {
-                foreach (var link in obj.Links)
-                {
-                    if (link.StartsWith(dirname))
-                    {
-                        Console.WriteLine(
-                            $"{obj.Type},{obj.Id}   =>   {link}");
-                    }
-                }
-            }
+            foreach (var link in obj.Links)
+                if (link.StartsWith(dirname))
+                    Console.WriteLine(
+                        $"{obj.Type},{obj.Id}   =>   {link}");
         }
 
         public void ShowStat(string name)
@@ -143,7 +137,7 @@ namespace FileSystem
                 FileHandler.RemoveFile(descriptor);
                 _descriptors.Remove(descriptor.Id);
             }
-            
+
             Console.WriteLine($"The file {name} was unlinked");
         }
 
@@ -161,7 +155,8 @@ namespace FileSystem
             {
                 var descriptor = (FileDescriptor)GetDescriptorByPath(path);
                 var fd = new FileHandler(descriptor);
-                Console.WriteLine($"The file {name} was opened, id of descriptor = {descriptor.Id}");
+                Console.WriteLine(
+                    $"The file {name} was opened, id of descriptor = {descriptor.Id}");
                 return fd;
             }
             catch (Exception)

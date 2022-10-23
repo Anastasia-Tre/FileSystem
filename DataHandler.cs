@@ -34,42 +34,39 @@ namespace FileSystem
         public void Write(FileDescriptor descriptor, string text, int offset,
             int size)
         {
+            var id = descriptor.Id;
             var blockIndex = offset / BlockSize;
             var blockOffset = offset % BlockSize;
             var blockNumber = size / BlockSize;
-            var count = Data[descriptor.Id].Count;
+            var count = Data[id].Count;
 
             if (count <= blockIndex)
                 for (var i = 0; i <= blockIndex - count + blockNumber; i++)
-                    Data[descriptor.Id].Add(null);
+                    Data[id].Add(null);
 
-            if (Data[descriptor.Id][blockIndex] == null)
+            if (Data[id][blockIndex] == null)
             {
                 descriptor.IncreaseNblock();
-                Data[descriptor.Id][blockIndex] =
-                    new string(char.MinValue, BlockSize);
+                Data[id][blockIndex] = new string(char.MinValue, BlockSize);
             }
 
             for (var i = 0; i < blockNumber; i++)
             {
-                if (Data[descriptor.Id][blockIndex + i] == null)
+                if (Data[id][blockIndex + i] == null)
                     descriptor.IncreaseNblock();
-                Data[descriptor.Id][blockIndex + i] =
+                Data[id][blockIndex + i] =
                     text.Substring(BlockSize * i, BlockSize);
             }
 
-            if (Data[descriptor.Id][blockIndex + blockNumber] == null)
+            if (Data[id][blockIndex + blockNumber] == null)
             {
                 descriptor.IncreaseNblock();
-                Data[descriptor.Id][blockIndex + blockNumber] =
-                    new string(char.MinValue, BlockSize);
+                Data[id][blockIndex + blockNumber] = new string(char.MinValue, BlockSize);
             }
 
-            Data[descriptor.Id][blockIndex + blockNumber] =
-                Data[descriptor.Id][blockIndex + blockNumber]
+            Data[id][blockIndex + blockNumber] = Data[id][blockIndex + blockNumber]
                     .Remove(blockOffset, size % BlockSize);
-            Data[descriptor.Id][blockIndex + blockNumber] =
-                Data[descriptor.Id][blockIndex + blockNumber].Insert(
+            Data[id][blockIndex + blockNumber] = Data[id][blockIndex + blockNumber].Insert(
                     blockOffset,
                     text.Substring(BlockSize * blockNumber, size % BlockSize));
 

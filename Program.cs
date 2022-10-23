@@ -7,7 +7,7 @@ namespace FileSystem
         private static void Main(string[] args)
         {
             var fs = new FileSystem(10);
-            
+
             Console.WriteLine();
             var filename = "file.txt";
             fs.CreateFile(filename);
@@ -59,8 +59,8 @@ namespace FileSystem
 
             Console.WriteLine();
             fileHandler.CloseFile();
-            
-            
+
+
             /*
             Console.WriteLine();
             fs.CreateFile("file.txt");

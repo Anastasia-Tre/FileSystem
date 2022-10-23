@@ -5,10 +5,10 @@ namespace FileSystem.Descriptors
     internal class ObjectDescriptor
     {
         protected static int NextId = 1;
-        protected int Nblock = 0;
-        protected int Size = 0;
 
         public List<string> Links;
+        protected int Nblock = 0;
+        protected int Size = 0;
 
         public ObjectDescriptor(string name, string path)
         {
