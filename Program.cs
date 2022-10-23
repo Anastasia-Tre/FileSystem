@@ -32,21 +32,21 @@ namespace FileSystem
             fs.ShowStat(filename2);
 
             Console.WriteLine();
-            var fd = fs.OpenFile(filename2);
+            var fileHandler = fs.OpenFile(filename2);
 
-            fs.Write(fd, 10, "0123456789");
+            fileHandler.Write(10, "0123456789");
             fs.ShowStat(filename2);
 
-            fs.Seek(fd, 7);
-            fs.Read(fd, 2);
+            fileHandler.Seek(7);
+            fileHandler.Read(2);
 
             Console.WriteLine();
-            fs.Seek(fd, 256);
-            fs.Write(fd, 6, "abcdfg");
+            fileHandler.Seek(256);
+            fileHandler.Write(7, "abcdfg");
 
             Console.WriteLine();
-            fs.Seek(fd, 0);
-            fs.Read(fd, 384);
+            fileHandler.Seek(0);
+            fileHandler.Read(384);
             fs.ShowStat(filename2);
 
             Console.WriteLine();
@@ -54,28 +54,28 @@ namespace FileSystem
             fs.Ls();
 
             Console.WriteLine();
-            fs.Seek(fd, 0);
-            fs.Read(fd, 10);
+            fileHandler.Seek(0);
+            fileHandler.Read(10);
 
             Console.WriteLine();
-            fs.CloseFile(fd);
+            fileHandler.CloseFile();
             */
             
             Console.WriteLine();
             fs.CreateFile("file.txt");
             fs.Link("file.txt", "document.txt");
-            fs.OpenFile("file.txt");
-            fs.Write(0, 10, "0123456789");
-            fs.CloseFile(0);
+            var fh = fs.OpenFile("file.txt");
+            fh.Write(10, "0123456789");
+            fh.CloseFile();
             fs.Ls();
             fs.Unlink("file.txt");
             fs.Ls();
             fs.CreateFile("file.txt");
-            fs.OpenFile("file.txt");
-            fs.Write(0, 10, "abcdefghij");
-            fs.CloseFile(0);
-            fs.OpenFile("document.txt");
-            fs.Read(0, 10);
+            fh = fs.OpenFile("file.txt");
+            fh.Write(10, "abcdefghij");
+            fh.CloseFile();
+            fh = fs.OpenFile("document.txt");
+            fh.Read( 10);
             fs.Ls();
 
         }
