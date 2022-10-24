@@ -6,8 +6,8 @@ namespace FileSystem
     {
         private static void Main(string[] args)
         {
-            var fs = new FileSystem(10);
-            /*
+            var fs = new FileSystem(100);
+            
             Console.WriteLine();
             var filename = "file.txt";
             fs.CreateFile(filename);
@@ -78,7 +78,7 @@ namespace FileSystem
             fh = fs.OpenFile("document1.txt");
             fh.Read( 10);
             fs.Ls();
-            */
+            
 
             Console.WriteLine();
 
@@ -86,10 +86,11 @@ namespace FileSystem
             fs.ShowStat("dir1");
             fs.Ls();
 
-            fs.Cd("dir1");
-            fs.MakeDir("dir1");
-            fs.MakeDir("dir2");
+            fs.MakeDir("dir1/dir2");
+            fs.ShowStat("dir1");
             fs.Ls();
+            fs.ShowStat("/");
+            
         }
     }
 }

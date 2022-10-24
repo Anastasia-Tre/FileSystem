@@ -155,21 +155,47 @@ namespace FileSystem
         public void Link(string name1, string name2)
         {
             var path1 = GetPath(name1);
-            var descriptor = (FileDescriptor)GetDescriptorByPath(path1);
-            var path2 = GetPath(name2);
-            descriptor.AddLink(path2);
+            var descriptor = GetDescriptorByPath(path1);
+            if (descriptor is DirDescriptor)
+            {
+                Console.WriteLine($"Link for directories is not allowed");
+                return;
+            }
+
+            if (descriptor is FileDescriptor fileDescriptor)
+            {
+                var path2 = GetPath(name2);
+                fileDescriptor.AddLink(path2);
+            }
+            if (descriptor is SymLinkDescriptor symLinkDescriptor)
+            {
+               
+            }
             Console.WriteLine($"The link {name2} was created");
         }
 
         public void Unlink(string name)
         {
             var path = GetPath(name);
-            var descriptor = (FileDescriptor)GetDescriptorByPath(path);
-            descriptor.RemoveLink(path);
-            if (descriptor.CanBeRemoved())
+            var descriptor = GetDescriptorByPath(path);
+            if (descriptor is DirDescriptor)
             {
-                FileHandler.RemoveFile(descriptor);
-                _descriptors.Remove(descriptor);
+                Console.WriteLine($"Unlink for directories is not allowed");
+                return;
+            }
+            
+            if (descriptor is FileDescriptor fileDescriptor)
+            {
+                fileDescriptor.RemoveLink(path);
+                if (fileDescriptor.CanBeRemoved())
+                {
+                    FileHandler.RemoveFile(fileDescriptor);
+                    _descriptors.Remove(fileDescriptor);
+                }
+            }
+            if (descriptor is SymLinkDescriptor symLinkDescriptor)
+            {
+                
             }
 
             Console.WriteLine($"The file {name} was unlinked");
