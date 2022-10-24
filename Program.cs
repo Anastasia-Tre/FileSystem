@@ -86,11 +86,19 @@ namespace FileSystem
             fs.ShowStat("dir1");
             fs.Ls();
 
+            Console.WriteLine();
             fs.MakeDir("dir1/dir2");
             fs.ShowStat("dir1");
             fs.Ls();
             fs.ShowStat("/");
-            
+
+            Console.WriteLine();
+            fs.Cd("dir1/dir2");
+            fs.Ls();
+            fs.CreateFile("file.txt");
+            fs.MakeDir("/a/b");
+            fs.Ls();
+            fs.Ls("/");
         }
     }
 }

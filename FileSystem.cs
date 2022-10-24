@@ -54,7 +54,7 @@ namespace FileSystem
         public void MakeDir(string name)
         {
             var tempCWD = CWD;
-
+            if (name.StartsWith('/')) CWD = (DirDescriptor)GetDescriptorByPath("/");
             var names = name.Split('/');
             foreach (var dirName in names)
             {
