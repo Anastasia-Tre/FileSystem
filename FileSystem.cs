@@ -241,9 +241,11 @@ namespace FileSystem
             Console.WriteLine($"Change CWD to {path}");
         }
 
-        public void Symlink()
+        public void Symlink(string objectName, string pathname)
         {
-
+            var path = GetPath(pathname);
+            var obj = GetDescriptorByPath(GetPath(objectName));
+            _descriptors.Add(new SymLinkDescriptor(path, obj));
         }
     }
 }

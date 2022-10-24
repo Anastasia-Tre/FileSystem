@@ -100,6 +100,10 @@ namespace FileSystem
             fs.Ls();
             fs.Ls("/");
 
+            Console.WriteLine();
+            fs.Symlink("/dir1", "/a/b/l1");
+            fs.Ls("/a/b");
+
         }
     }
 }

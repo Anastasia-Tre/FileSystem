@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace FileSystem.Descriptors
 {
     internal class SymLinkDescriptor : ObjectDescriptor
@@ -23,7 +18,7 @@ namespace FileSystem.Descriptors
 
         public override string GetType()
         {
-            return $"{Type},{Id} -> {_linkedObject.Name}";
+            return $"{Type},{Id} -> {_linkedObject.Path}";
         }
     }
 }
