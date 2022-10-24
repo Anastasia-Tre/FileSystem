@@ -35,8 +35,8 @@ namespace FileSystem
                     if (obj.Path == path) return obj;
                 }
             }
-
-            throw new Exception("No such object in file system"); // replace
+            return null;
+            //throw new Exception("No such object in file system");
         }
 
         private string GetPath(string name)
@@ -53,6 +53,20 @@ namespace FileSystem
 
         public void MakeDir(string name)
         {
+            var tempCWD = CWD;
+
+            var names = name.Split('/');
+            foreach (var dirName in names)
+            {
+                CreateDir(dirName);
+                Cd(dirName);
+            }
+
+            CWD = tempCWD;
+        }
+
+        private void CreateDir(string name)
+        {
             var path = GetPath(name);
             if (_descriptors.Count >= _maxDescriptorsNumber)
             {
@@ -61,19 +75,15 @@ namespace FileSystem
                 return;
             }
 
-            try
+            if (GetDescriptorByPath(path) == null)
             {
-                var dir = new DirDescriptor(name, path, CWD);
-                _descriptors.Add(dir);
+                _descriptors.Add(new DirDescriptor(name, path, CWD));
+                Console.WriteLine($"The directory {name} was created");
             }
-            catch (ArgumentException)
+            else
             {
-                Console.WriteLine(
-                    $"The directory {name} has been already created");
-                return;
+                Console.WriteLine($"The directory {name} has been already created");
             }
-
-            Console.WriteLine($"The directory {name} was created");
         }
 
         public void CreateFile(string name)
