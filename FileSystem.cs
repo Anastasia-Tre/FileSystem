@@ -16,7 +16,7 @@ namespace FileSystem
         public FileSystem(int maxDescrNumber)
         {
             _maxDescriptorsNumber = maxDescrNumber;
-            var rootDir = new DirDescriptor("/", "/", null);
+            var rootDir = new DirDescriptor("/", null);
             _descriptors = new List<ObjectDescriptor> { rootDir };
             
             CWD = rootDir;
@@ -45,12 +45,6 @@ namespace FileSystem
             return CWD.Path == "/" ? $"/{name}" : $"{CWD.Path}/{name}";
         }
 
-        private string GetNameFromPath(string path)
-        {
-            //Console.WriteLine($"GetNameFromPath: {path.Substring(path.LastIndexOf('/') + 1)}");
-            return path.Substring(path.LastIndexOf('/') + 1);
-        }
-
         public void MakeDir(string name)
         {
             var tempCWD = CWD;
@@ -61,28 +55,31 @@ namespace FileSystem
                 CreateDir(dirName);
                 Cd(dirName);
             }
-
             CWD = tempCWD;
         }
 
-        private void CreateDir(string name)
+        private DirDescriptor CreateDir(string name)
         {
             var path = GetPath(name);
             if (_descriptors.Count >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
                     "Cannot create new directory. Max number of objects in system has reached.");
-                return;
+                return null;
             }
 
-            if (GetDescriptorByPath(path) == null)
+            var descriptor = GetDescriptorByPath(path);
+            if (descriptor == null)
             {
-                _descriptors.Add(new DirDescriptor(name, path, CWD));
+                var dir = new DirDescriptor(path, CWD);
+                _descriptors.Add(dir);
                 Console.WriteLine($"The directory {name} was created");
+                return dir;
             }
             else
             {
                 Console.WriteLine($"The directory {name} has been already created");
+                return (DirDescriptor)descriptor;
             }
         }
 
@@ -105,7 +102,7 @@ namespace FileSystem
 
             try
             {
-                var descriptor = new FileDescriptor(name, path);
+                var descriptor = new FileDescriptor(path);
                 _descriptors.Add(descriptor);
                 FileHandler.CreateFile(descriptor);
             }
@@ -133,7 +130,7 @@ namespace FileSystem
                 {
                     foreach (var link in fileDescriptor.Links)
                     {
-                        var objName = GetNameFromPath(link);
+                        var objName = obj.GetNameFromPath(link);
                         if (link == $"{dirname}/{objName}")
                             Console.WriteLine($"{obj.GetType()}   =>   {objName}");
                     }
@@ -141,7 +138,7 @@ namespace FileSystem
                 else
                 {
                     //Console.WriteLine($"LS for {GetNameFromPath(obj.Path)}: {dirname}/{GetNameFromPath(obj.Path)}");
-                    var objName = GetNameFromPath(obj.Path);
+                    var objName = obj.GetNameFromPath(obj.Path); // replace with obj.Name?
                     if (objName != "" && obj.Path == $"{dirname}/{objName}")
                         Console.WriteLine($"{obj.GetType()}   =>   {objName}");
                 }
@@ -236,13 +233,17 @@ namespace FileSystem
             }
         }
 
-        public DirDescriptor Cd(string name)
+        public void Cd(string name)
         {
             var path = GetPath(name);
             var dir = GetDescriptorByPath(path);
             CWD = (DirDescriptor)dir;
             Console.WriteLine($"Change CWD to {path}");
-            return CWD;
+        }
+
+        public void Symlink()
+        {
+
         }
     }
 }

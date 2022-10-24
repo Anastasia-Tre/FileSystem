@@ -10,7 +10,7 @@ namespace FileSystem.Descriptors
 
         public List<string> Links;
 
-        public FileDescriptor(string name, string path) : base(name, path)
+        public FileDescriptor(string path) : base(path)
         {
             Type = ObjectDescriptors.File;
             Links = new List<string> { path };

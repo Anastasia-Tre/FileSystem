@@ -4,7 +4,7 @@
     {
         public DirDescriptor ParentDir;
 
-        public DirDescriptor(string name, string path, DirDescriptor parentDir) : base(name, path)
+        public DirDescriptor(string path, DirDescriptor parentDir) : base(path)
         {
             Type = ObjectDescriptors.Dir;
             ParentDir = parentDir;

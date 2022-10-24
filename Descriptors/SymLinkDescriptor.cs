@@ -10,7 +10,7 @@ namespace FileSystem.Descriptors
     {
         private readonly ObjectDescriptor _linkedObject;
 
-        public SymLinkDescriptor(string name, string path, ObjectDescriptor obj) : base(name, path)
+        public SymLinkDescriptor(string path, ObjectDescriptor obj) : base(path)
         {
             Type = ObjectDescriptors.Sym;
             _linkedObject = obj;

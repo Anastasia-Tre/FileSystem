@@ -8,10 +8,10 @@ namespace FileSystem.Descriptors
 
         protected int Nlink;
 
-        public ObjectDescriptor(string name, string path)
+        public ObjectDescriptor(string path)
         {
             Id = NextId++;
-            Name = name;
+            Name = GetNameFromPath(path);
             Path = path;
         }
 
@@ -22,5 +22,10 @@ namespace FileSystem.Descriptors
 
         public abstract string Stat();
         public abstract string GetType();
+
+        public string GetNameFromPath(string path)
+        {
+            return path.Substring(path.LastIndexOf('/') + 1);
+        }
     }
 }
