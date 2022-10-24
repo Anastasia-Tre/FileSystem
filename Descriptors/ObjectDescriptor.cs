@@ -2,13 +2,11 @@
 
 namespace FileSystem.Descriptors
 {
-    internal class ObjectDescriptor
+    internal abstract class ObjectDescriptor
     {
         protected static int NextId = 1;
 
         protected int Nlink;
-        protected int Nblock = 0;
-        protected int Size = 0;
 
         public ObjectDescriptor(string name, string path)
         {
@@ -22,10 +20,6 @@ namespace FileSystem.Descriptors
         public string Name { get; }
         public string Path { get; }
 
-        public string Stat()
-        {
-            return $"id={Id}, type={Type}, " +
-                   $"nlink={Nlink}, size={Size}, nblock={Nblock}";
-        }
+        public abstract string Stat();
     }
 }

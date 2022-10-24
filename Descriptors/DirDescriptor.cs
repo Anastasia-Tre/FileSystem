@@ -12,5 +12,10 @@
             else ParentDir = this;
             Nlink += 2;
         }
+
+        public override string Stat()
+        {
+            return $"id={Id}, type={Type}, nlink={Nlink}";
+        }
     }
 }
