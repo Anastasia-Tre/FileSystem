@@ -21,5 +21,6 @@ namespace FileSystem.Descriptors
         public string Path { get; }
 
         public abstract string Stat();
+        public abstract string GetType();
     }
 }

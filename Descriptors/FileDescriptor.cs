@@ -12,7 +12,7 @@ namespace FileSystem.Descriptors
 
         public FileDescriptor(string name, string path) : base(name, path)
         {
-            Type = ObjectDescriptors.FileDescriptor;
+            Type = ObjectDescriptors.File;
             Links = new List<string> { path };
             Nlink++;
         }
@@ -58,6 +58,11 @@ namespace FileSystem.Descriptors
         {
             return $"id={Id}, type={Type}, " +
                    $"nlink={Nlink}, size={Size}, nblock={Nblock}";
+        }
+
+        public override string GetType()
+        {
+            return $"{Type},{Id}";
         }
     }
 }

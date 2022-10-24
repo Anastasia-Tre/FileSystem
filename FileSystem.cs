@@ -125,7 +125,7 @@ namespace FileSystem
                     {
                         var objName = GetNameFromPath(link);
                         if (link == $"{dirname}/{objName}")
-                            Console.WriteLine($"{obj.Type},{obj.Id}   =>   {objName}");
+                            Console.WriteLine($"{obj.GetType()}   =>   {objName}");
                     }
                 }
                 else
@@ -133,7 +133,7 @@ namespace FileSystem
                     //Console.WriteLine($"LS for {GetNameFromPath(obj.Path)}: {dirname}/{GetNameFromPath(obj.Path)}");
                     var objName = GetNameFromPath(obj.Path);
                     if (objName != "" && obj.Path == $"{dirname}/{objName}")
-                        Console.WriteLine($"{obj.Type},{obj.Id}   =>   {objName}");
+                        Console.WriteLine($"{obj.GetType()}   =>   {objName}");
                 }
             }
         }
