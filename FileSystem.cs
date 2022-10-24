@@ -45,6 +45,12 @@ namespace FileSystem
             return CWD.Path == "/" ? $"/{name}" : $"{CWD.Path}/{name}";
         }
 
+        private string GetNameFromPath(string path)
+        {
+            //Console.WriteLine($"GetNameFromPath: {path.Substring(path.LastIndexOf('/') + 1)}");
+            return path.Substring(path.LastIndexOf('/') + 1);
+        }
+
         public void MakeDir(string name)
         {
             var path = GetPath(name);
@@ -102,22 +108,32 @@ namespace FileSystem
             Console.WriteLine($"The file {name} was created");
         }
 
-        public void Ls(string name = "/")
+        public void Ls(string name = null)
         {
-            var dirname = GetPath(name);
+            var dirname = name == null ? CWD.Path : GetPath(name);
+            dirname = dirname == "/" ? "" : dirname; // fix ls for root directory
+
             Console.WriteLine($"List of objects in directory {dirname}");
+            Console.WriteLine($"{CWD.Type},{CWD.Id}   =>   .");
+            Console.WriteLine($"{CWD.ParentDir.Type},{CWD.ParentDir.Id}   =>   ..");
+
             foreach (var obj in _descriptors)
             {
                 if (obj is FileDescriptor fileDescriptor)
                 {
                     foreach (var link in fileDescriptor.Links)
-                        if (link.StartsWith(dirname))
-                            Console.WriteLine($"{obj.Type},{obj.Id}   =>   {link}");
+                    {
+                        var objName = GetNameFromPath(link);
+                        if (link == $"{dirname}/{objName}")
+                            Console.WriteLine($"{obj.Type},{obj.Id}   =>   {objName}");
+                    }
                 }
                 else
                 {
-                    if (obj.Path.StartsWith(dirname))
-                        Console.WriteLine($"{obj.Type},{obj.Id}   =>   {obj.Path}");
+                    //Console.WriteLine($"LS for {GetNameFromPath(obj.Path)}: {dirname}/{GetNameFromPath(obj.Path)}");
+                    var objName = GetNameFromPath(obj.Path);
+                    if (objName != "" && obj.Path == $"{dirname}/{objName}")
+                        Console.WriteLine($"{obj.Type},{obj.Id}   =>   {objName}");
                 }
             }
         }
@@ -125,16 +141,13 @@ namespace FileSystem
         public void ShowStat(string name)
         {
             var path = GetPath(name);
-            Console.WriteLine($"path = {path}");
             try
             {
                 var descriptor = GetDescriptorByPath(path);
-                Console.WriteLine(
-                    $"Information for {path}:\n    {descriptor.Stat()}");
+                Console.WriteLine($"Information for {path}:\n    {descriptor.Stat()}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
                 Console.WriteLine($"No object with the name {name} in system");
             }
         }

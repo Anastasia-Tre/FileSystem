@@ -2,13 +2,14 @@
 {
     internal class DirDescriptor : ObjectDescriptor
     {
-        private DirDescriptor _parentDir;
+        public DirDescriptor ParentDir;
 
         public DirDescriptor(string name, string path, DirDescriptor parentDir) : base(name, path)
         {
             Type = ObjectDescriptors.DirDescriptor;
-            _parentDir = parentDir;
+            ParentDir = parentDir;
             if (parentDir != null) parentDir.Nlink++;
+            else ParentDir = this;
             Nlink += 2;
         }
     }
