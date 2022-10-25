@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FileSystem.Descriptors;
+using FileSystem.Tree;
 
-namespace FileSystem.FileTree
+namespace FileSystem.Tree
 {
     internal class FileTree
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FileSystem.Descriptors;
 
-namespace FileSystem.FileTree
+namespace FileSystem.Tree
 {
     internal class TreeObject
     {
