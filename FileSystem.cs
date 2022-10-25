@@ -92,14 +92,12 @@ namespace FileSystem
         public void Ls(string name = null) 
         {
             var dirname = name == null ? _tree.CWD.Descriptor.Path : _tree.GetPath(name);
-            dirname = dirname == "/" ? "" : dirname; // fix ls for root directory
 
             Console.WriteLine($"List of objects in directory {dirname}");
             Console.WriteLine($"{_tree.CWD.Descriptor.Type},{_tree.CWD.Descriptor.Id}   =>   .");
             Console.WriteLine($"{_tree.CWD.Parent.Descriptor.Type},{_tree.CWD.Parent.Descriptor.Id}   =>   ..");
-
-            var descriptors = _tree.Ls(dirname);
-            foreach (var obj in descriptors)
+            
+            foreach (var obj in _tree.Ls(dirname))
             {
                 if (obj is FileDescriptor fileDescriptor)
                 {
@@ -110,23 +108,20 @@ namespace FileSystem
                 }
                 else
                 {
-                    var objName = obj.GetNameFromPath(obj.Path); // replace with obj.Name?
-                    Console.WriteLine($"{obj.GetType()}   =>   {objName}");
+                    Console.WriteLine($"{obj.GetType()}   =>   {obj.Name}");
                 }
             }
         }
 
         public void ShowStat(string name)
         {
-            try
+            var descriptor = _tree.GetObjectDescriptor(name);
+            if (descriptor != null)
             {
-                var descriptor = _tree.GetObjectDescriptor(name);
                 Console.WriteLine($"Information for {name}:\n    {descriptor.Stat()}");
+                return;
             }
-            catch (Exception)
-            {
-                Console.WriteLine($"No object with the name {name} in system");
-            }
+            Console.WriteLine($"No object with the name {name} in system");
         }
 
         public void Link(string name1, string name2)
