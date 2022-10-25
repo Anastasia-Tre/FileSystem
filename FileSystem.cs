@@ -2,179 +2,181 @@
 using System.Collections.Generic;
 using System.Linq;
 using FileSystem.Descriptors;
+using FileSystem.Tree;
 
 namespace FileSystem
 {
     internal class FileSystem
     {
-        private readonly List<ObjectDescriptor> _descriptors;
+        private readonly FileTree _tree;
         private readonly int _maxDescriptorsNumber;
         private readonly int _maxFileNameLength = 128;
-
-        public DirDescriptor CWD;
 
         public FileSystem(int maxDescrNumber)
         {
             _maxDescriptorsNumber = maxDescrNumber;
-            var rootDir = new DirDescriptor("/", "/", null);
-            _descriptors = new List<ObjectDescriptor> { rootDir };
-            
-            CWD = rootDir;
+            _tree = new FileTree(new DirDescriptor("/", null));
             Console.WriteLine("The file system was created");
         }
 
-        private ObjectDescriptor GetDescriptorByPath(string path)
+        public void MakeDir(string name) // rewrite, maybe move to FileTree
         {
-            foreach (var obj in _descriptors)
+            var tempCWD = _tree.CWD;
+            if (name.StartsWith('/')) _tree.Cd("/");
+            var names = name.Split('/');
+            foreach (var dirName in names)
             {
-                if (obj is FileDescriptor fileDescriptor)
-                {
-                    if (fileDescriptor.Links.Contains(path)) return obj;
-                } else
-                {
-                    if (obj.Path == path) return obj;
-                }
+                CreateDir(dirName);
+                Cd(dirName);
             }
-
-            throw new Exception("No such object in file system"); // replace
+            _tree.CWD = tempCWD;
         }
 
-        private string GetPath(string name)
+        private DirDescriptor CreateDir(string name)
         {
-            if (name.StartsWith('/')) return name;
-            return CWD.Path == "/" ? $"/{name}" : $"{CWD.Path}/{name}";
-        }
-
-        public void MakeDir(string name)
-        {
-            var path = GetPath(name);
-            if (_descriptors.Count >= _maxDescriptorsNumber)
+            var path = _tree.GetPath(name);
+            if (FileTree.ObjectNumber >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
                     "Cannot create new directory. Max number of objects in system has reached.");
-                return;
+                return null;
             }
 
-            try
+            var descriptor = _tree.GetObjectDescriptor(name);
+            if (descriptor == null)
             {
-                var dir = new DirDescriptor(name, path, CWD);
-                _descriptors.Add(dir);
+                var dir = new DirDescriptor(path, (DirDescriptor)_tree.CWD.Descriptor);
+                _tree.AddTreeObject(dir);
+                Console.WriteLine($"The directory {name} was created");
+                return dir;
             }
-            catch (ArgumentException)
-            {
-                Console.WriteLine(
-                    $"The directory {name} has been already created");
-                return;
-            }
-
-            Console.WriteLine($"The directory {name} was created");
+            Console.WriteLine($"The directory {name} has been already created");
+            return (DirDescriptor)descriptor;
         }
 
-        public void CreateFile(string name)
+        public FileDescriptor CreateFile(string name)
         {
-            var path = GetPath(name);
+            var path = _tree.GetPath(name);
             if (_maxFileNameLength < name.Length)
             {
                 Console.WriteLine(
                     "Cannot create new file. Too long file name.");
-                return;
+                return null;
             }
 
-            if (_descriptors.Count >= _maxDescriptorsNumber)
+            if (FileTree.ObjectNumber >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
                     "Cannot create new file. Max number of objects in system has reached.");
-                return;
+                return null;
             }
 
-            try
+            var descriptor = _tree.GetObjectDescriptor(name);
+            if (descriptor == null)
             {
-                var descriptor = new FileDescriptor(name, path);
-                _descriptors.Add(descriptor);
-                FileHandler.CreateFile(descriptor);
+                var file = new FileDescriptor(path);
+                _tree.AddTreeObject(file);
+                FileHandler.CreateFile(file);
+                Console.WriteLine($"The file {name} was created");
+                return file;
             }
-            catch (ArgumentException)
-            {
-                Console.WriteLine($"The file {name} has been already created");
-                return;
-            }
+            Console.WriteLine($"The file {name} has been already created");
+            return (FileDescriptor)descriptor;
 
-            Console.WriteLine($"The file {name} was created");
         }
 
-        public void Ls(string name = "/")
+        public void Ls(string name = null) 
         {
-            var dirname = GetPath(name);
+            var dirname = name == null ? _tree.CWD.Descriptor.Path : _tree.GetPath(name);
+
             Console.WriteLine($"List of objects in directory {dirname}");
-            foreach (var obj in _descriptors)
+            Console.WriteLine($"{_tree.CWD.Descriptor.Type},{_tree.CWD.Descriptor.Id}   =>   .");
+            Console.WriteLine($"{_tree.CWD.Parent.Descriptor.Type},{_tree.CWD.Parent.Descriptor.Id}   =>   ..");
+            
+            foreach (var obj in _tree.Ls(dirname))
             {
                 if (obj is FileDescriptor fileDescriptor)
                 {
                     foreach (var link in fileDescriptor.Links)
-                        if (link.StartsWith(dirname))
-                            Console.WriteLine($"{obj.Type},{obj.Id}   =>   {link}");
+                    {
+                        Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
+                    }
                 }
                 else
                 {
-                    if (obj.Path.StartsWith(dirname))
-                        Console.WriteLine($"{obj.Type},{obj.Id}   =>   {obj.Path}");
+                    Console.WriteLine($"{obj.GetType()}   =>   {obj.Name}");
                 }
             }
         }
 
         public void ShowStat(string name)
         {
-            var path = GetPath(name);
-            Console.WriteLine($"path = {path}");
-            try
+            var descriptor = _tree.GetObjectDescriptor(name);
+            if (descriptor != null)
             {
-                var descriptor = GetDescriptorByPath(path);
-                Console.WriteLine(
-                    $"Information for {path}:\n    {descriptor.Stat()}");
+                Console.WriteLine($"Information for {name}:\n    {descriptor.Stat()}");
+                return;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Console.WriteLine($"No object with the name {name} in system");
-            }
+            Console.WriteLine($"No object with the name {name} in system");
         }
 
         public void Link(string name1, string name2)
         {
-            var path1 = GetPath(name1);
-            var descriptor = (FileDescriptor)GetDescriptorByPath(path1);
-            var path2 = GetPath(name2);
-            descriptor.AddLink(path2);
+            var descriptor = _tree.GetObjectDescriptor(name1);
+            switch (descriptor)
+            {
+                case DirDescriptor:
+                    Console.WriteLine($"Link for directories is not allowed");
+                    return;
+                case FileDescriptor fileDescriptor:
+                {
+                    var path2 = _tree.GetPath(name2);
+                    fileDescriptor.AddLink(path2);
+                    break;
+                }
+                case SymLinkDescriptor symLinkDescriptor:
+                    break;
+            }
             Console.WriteLine($"The link {name2} was created");
         }
 
         public void Unlink(string name)
         {
-            var path = GetPath(name);
-            var descriptor = (FileDescriptor)GetDescriptorByPath(path);
-            descriptor.RemoveLink(path);
-            if (descriptor.CanBeRemoved())
+            var path = _tree.GetPath(name); // remove
+            var descriptor = _tree.GetObjectDescriptor(name);
+            switch (descriptor)
             {
-                FileHandler.RemoveFile(descriptor);
-                _descriptors.Remove(descriptor);
+                case DirDescriptor:
+                    Console.WriteLine($"Unlink for directories is not allowed");
+                    return;
+                case FileDescriptor fileDescriptor:
+                {
+                    fileDescriptor.RemoveLink(path);
+                    if (fileDescriptor.CanBeRemoved())
+                    {
+                        FileHandler.RemoveFile(fileDescriptor);
+                        _tree.RemoveTreeObject(path);
+                    }
+                    break;
+                }
+                case SymLinkDescriptor symLinkDescriptor:
+                    break;
             }
 
-            Console.WriteLine($"The file {name} was unlinked");
+            Console.WriteLine($"The object {name} was unlinked");
         }
 
         public void Truncate(string name, int size)
         {
-            var path = GetPath(name);
-            ((FileDescriptor)GetDescriptorByPath(path)).Truncate(size);
+            ((FileDescriptor)_tree.GetObjectDescriptor(name)).Truncate(size);
             Console.WriteLine($"The size of file {name} was changed");
         }
 
         public FileHandler OpenFile(string name)
         {
-            var path = GetPath(name);
             try
             {
-                var descriptor = (FileDescriptor)GetDescriptorByPath(path);
+                var descriptor = (FileDescriptor)_tree.GetObjectDescriptor(name);
                 var fd = new FileHandler(descriptor);
                 Console.WriteLine(
                     $"The file {name} was opened, id of descriptor = {descriptor.Id}");
@@ -187,13 +189,17 @@ namespace FileSystem
             }
         }
 
-        public DirDescriptor Cd(string name)
+        public void Cd(string name)
         {
-            var path = GetPath(name);
-            var dir = GetDescriptorByPath(path);
-            CWD = (DirDescriptor)dir;
-            Console.WriteLine($"Change CWD to {path}");
-            return CWD;
+            _tree.Cd(name);
+            Console.WriteLine($"Change CWD to {_tree.CWD.Descriptor.Path}");
+        }
+
+        public void Symlink(string objectName, string pathname)
+        {
+            var path = _tree.GetPath(pathname);
+            var obj = _tree.GetObjectDescriptor(objectName);
+            _tree.AddTreeObject(new SymLinkDescriptor(path, obj));
         }
     }
 }

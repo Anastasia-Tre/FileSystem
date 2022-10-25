@@ -2,18 +2,16 @@
 
 namespace FileSystem.Descriptors
 {
-    internal class ObjectDescriptor
+    internal abstract class ObjectDescriptor
     {
         protected static int NextId = 1;
 
         protected int Nlink;
-        protected int Nblock = 0;
-        protected int Size = 0;
 
-        public ObjectDescriptor(string name, string path)
+        public ObjectDescriptor(string path)
         {
             Id = NextId++;
-            Name = name;
+            Name = GetNameFromPath(path);
             Path = path;
         }
 
@@ -22,10 +20,12 @@ namespace FileSystem.Descriptors
         public string Name { get; }
         public string Path { get; }
 
-        public string Stat()
+        public abstract string Stat();
+        public abstract string GetType();
+
+        public string GetNameFromPath(string path)
         {
-            return $"id={Id}, type={Type}, " +
-                   $"nlink={Nlink}, size={Size}, nblock={Nblock}";
+            return path.Substring(path.LastIndexOf('/') + 1);
         }
     }
 }

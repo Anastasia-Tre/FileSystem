@@ -5,12 +5,14 @@ namespace FileSystem.Descriptors
     internal class FileDescriptor : ObjectDescriptor
     {
         private int _openFileHandlersNumber;
+        private int Nblock = 0;
+        private int Size = 0;
 
         public List<string> Links;
 
-        public FileDescriptor(string name, string path) : base(name, path)
+        public FileDescriptor(string path) : base(path)
         {
-            Type = ObjectDescriptors.FileDescriptor;
+            Type = ObjectDescriptors.File;
             Links = new List<string> { path };
             Nlink++;
         }
@@ -50,6 +52,17 @@ namespace FileSystem.Descriptors
         public bool CanBeRemoved()
         {
             return _openFileHandlersNumber == 0 && Links.Count == 0;
+        }
+
+        public override string Stat()
+        {
+            return $"id={Id}, type={Type}, " +
+                   $"nlink={Nlink}, size={Size}, nblock={Nblock}";
+        }
+
+        public override string GetType()
+        {
+            return $"{Type},{Id}";
         }
     }
 }

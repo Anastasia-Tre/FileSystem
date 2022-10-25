@@ -2,7 +2,8 @@
 {
     internal enum ObjectDescriptors
     {
-        FileDescriptor = 1,
-        DirDescriptor
+        File = 1,
+        Dir,
+        Sym
     }
 }
