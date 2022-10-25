@@ -31,9 +31,9 @@ namespace FileSystem
             _tree.CWD = tempCWD;
         }
 
-        private DirDescriptor CreateDir(string name) // move logic to FileTree
+        private DirDescriptor CreateDir(string name)
         {
-            var path = _tree.GetPath(name); // remove
+            var path = _tree.GetPath(name);
             if (FileTree.ObjectNumber >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
@@ -49,16 +49,13 @@ namespace FileSystem
                 Console.WriteLine($"The directory {name} was created");
                 return dir;
             }
-            else
-            {
-                Console.WriteLine($"The directory {name} has been already created");
-                return (DirDescriptor)descriptor;
-            }
+            Console.WriteLine($"The directory {name} has been already created");
+            return (DirDescriptor)descriptor;
         }
 
         public FileDescriptor CreateFile(string name)
         {
-            var path = _tree.GetPath(name); //remove
+            var path = _tree.GetPath(name);
             if (_maxFileNameLength < name.Length)
             {
                 Console.WriteLine(
@@ -81,12 +78,10 @@ namespace FileSystem
                 FileHandler.CreateFile(file);
                 Console.WriteLine($"The file {name} was created");
                 return file;
-            } else
-            {
-                Console.WriteLine($"The file {name} has been already created");
-                return (FileDescriptor)descriptor;
             }
-            
+            Console.WriteLine($"The file {name} has been already created");
+            return (FileDescriptor)descriptor;
+
         }
 
         public void Ls(string name = null) 
