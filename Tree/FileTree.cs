@@ -37,6 +37,13 @@ namespace FileSystem.Tree
             var temp = _rootTreeObject;
             for (var i = 1; i < names.Length; i++)
             {
+                if (names[i] == ".") names[i] = temp.Descriptor.Name;
+                if (names[i] == "..")
+                {
+                    temp = temp.Parent;
+                    continue;
+                }
+                if (names[i] == "") continue;
                 temp = temp?.Children.FirstOrDefault(obj => {
                     if (obj.Descriptor is FileDescriptor fileDescriptor)
                     {
@@ -45,7 +52,6 @@ namespace FileSystem.Tree
                             return fileDescriptor.GetNameFromPath(link) ==
                                    names[i];
                         }
-                        //return fileDescriptor.Links.First(link => fileDescriptor.GetNameFromPath(link) == names[i]);
                     }
                     return obj.Descriptor.Name == names[i];
                 });

@@ -110,7 +110,8 @@ namespace FileSystem
             fs.Ls("/a/b");
 
             fs.OpenFile("/a/b/l1/dir2/file.txt");
-
+            fs.Cd("../");
+            fs.Cd("/");
         }
     }
 }

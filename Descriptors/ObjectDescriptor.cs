@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FileSystem.Descriptors
+﻿namespace FileSystem.Descriptors
 {
     internal abstract class ObjectDescriptor
     {
