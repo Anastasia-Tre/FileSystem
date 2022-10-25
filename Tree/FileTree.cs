@@ -32,34 +32,21 @@ namespace FileSystem.Tree
 
         private TreeObject GetTreeObject(string path)
         {
-            if (path == "/") return _rootTreeObject;
             var names = path.Split('/');
-            var temp = _rootTreeObject;
+            var result = _rootTreeObject;
             for (var i = 1; i < names.Length; i++)
             {
-                if (names[i] == ".")
-                {
-                    continue;
-                }
+                if (names[i] == "." || names[i] == "") continue;
                 if (names[i] == "..")
                 {
-                    temp = temp.Parent;
+                    result = result?.Parent;
                     continue;
                 }
-                if (names[i] == "") continue;
-                temp = temp?.Children.FirstOrDefault(obj => {
-                    if (obj.Descriptor is FileDescriptor fileDescriptor)
-                    {
-                        foreach (var link in fileDescriptor.Links)
-                        {
-                            return fileDescriptor.GetNameFromPath(link) ==
-                                   names[i];
-                        }
-                    }
-                    return obj.Descriptor.Name == names[i];
-                });
+                result = result?.Children.FirstOrDefault(obj =>
+                    obj.Descriptor.Links.Exists(link =>
+                        obj.Descriptor.GetNameFromPath(link) == names[i]));
             }
-            return temp;
+            return result;
         }
 
         public void Cd(string name)

@@ -9,7 +9,7 @@ namespace FileSystem
             var fs = new FileSystem(100);
 
             #region lab4
-            /*
+            
             Console.WriteLine();
             var filename = "file.txt";
             fs.CreateFile(filename);
@@ -80,7 +80,7 @@ namespace FileSystem
             fh = fs.OpenFile("document1.txt");
             fh.Read( 10);
             fs.Ls();
-            */
+            
 
             #endregion lab4
 

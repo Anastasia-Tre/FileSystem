@@ -33,7 +33,7 @@ namespace FileSystem
         private DirDescriptor CreateDir(string name)
         {
             var path = _tree.GetPath(name);
-            if (FileTree.ObjectNumber >= _maxDescriptorsNumber)
+            if (FileTree.ObjectNumber >= _maxDescriptorsNumber) // move to FileTree
             {
                 Console.WriteLine(
                     "Cannot create new directory. Max number of objects in system has reached.");
@@ -93,6 +93,11 @@ namespace FileSystem
             
             foreach (var obj in _tree.Ls(dirname))
             {
+                foreach (var link in obj.Links)
+                {
+                    Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
+                }
+                /*
                 if (obj is FileDescriptor fileDescriptor)
                 {
                     foreach (var link in fileDescriptor.Links)
@@ -103,7 +108,7 @@ namespace FileSystem
                 else
                 {
                     Console.WriteLine($"{obj.GetType()}   =>   {obj.Name}");
-                }
+                }*/
             }
         }
 
@@ -126,29 +131,22 @@ namespace FileSystem
                 case DirDescriptor:
                     Console.WriteLine($"Link for directories is not allowed");
                     return;
-                case FileDescriptor fileDescriptor:
-                {
-                    var path2 = _tree.GetPath(name2);
-                    fileDescriptor.AddLink(path2);
-                    break;
-                }
-                case SymLinkDescriptor symLinkDescriptor:
+                default:
+                    descriptor.AddLink(_tree.GetPath(name2));
+                    Console.WriteLine($"The link {name2} was created");
                     break;
             }
-            Console.WriteLine($"The link {name2} was created");
         }
 
         public void Unlink(string name)
         {
-            var path = _tree.GetPath(name); // remove
-            var descriptor = _tree.GetObjectDescriptor(name);
-            switch (descriptor)
+            var path = _tree.GetPath(name);
+            switch (_tree.GetObjectDescriptor(name))
             {
                 case DirDescriptor:
                     Console.WriteLine($"Unlink for directories is not allowed");
                     return;
                 case FileDescriptor fileDescriptor:
-                {
                     fileDescriptor.RemoveLink(path);
                     if (fileDescriptor.CanBeRemoved())
                     {
@@ -156,11 +154,11 @@ namespace FileSystem
                         _tree.RemoveTreeObject(path);
                     }
                     break;
-                }
                 case SymLinkDescriptor symLinkDescriptor:
+                    symLinkDescriptor.RemoveLink(path);
+                    _tree.RemoveTreeObject(path);
                     break;
             }
-
             Console.WriteLine($"The object {name} was unlinked");
         }
 

@@ -8,30 +8,14 @@ namespace FileSystem.Descriptors
         private int Nblock = 0;
         private int Size = 0;
 
-        public List<string> Links;
-
         public FileDescriptor(string path) : base(path)
         {
             Type = ObjectDescriptors.File;
-            Links = new List<string> { path };
-            Nlink++;
         }
 
         public void Truncate(int size)
         {
             Size = size;
-        }
-
-        public void AddLink(string path)
-        {
-            Links.Add(path);
-            Nlink++;
-        }
-
-        public void RemoveLink(string path)
-        {
-            Links.Remove(path);
-            Nlink--;
         }
 
         public int IncreaseNblock()

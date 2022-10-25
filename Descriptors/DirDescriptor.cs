@@ -1,4 +1,6 @@
-﻿namespace FileSystem.Descriptors
+﻿using System;
+
+namespace FileSystem.Descriptors
 {
     internal class DirDescriptor : ObjectDescriptor
     {
@@ -10,7 +12,7 @@
             ParentDir = parentDir;
             if (parentDir != null) parentDir.Nlink++;
             else ParentDir = this;
-            Nlink += 2;
+            Nlink++;
         }
 
         public override string Stat()
