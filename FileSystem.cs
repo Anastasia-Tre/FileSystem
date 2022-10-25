@@ -195,9 +195,8 @@ namespace FileSystem
 
         public void Cd(string name)
         {
-            var path = _tree.GetPath(name);
-            _tree.Cd(path);
-            Console.WriteLine($"Change CWD to {path}");
+            _tree.Cd(name);
+            Console.WriteLine($"Change CWD to {_tree.CWD.Descriptor.Path}");
         }
 
         public void Symlink(string objectName, string pathname)

@@ -48,8 +48,9 @@ namespace FileSystem
             return temp;
         }
 
-        public void Cd(string path)
+        public void Cd(string name)
         {
+            var path = GetPath(name);
             CWD = GetTreeObject(path);
         }
 
