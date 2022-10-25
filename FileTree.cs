@@ -17,8 +17,9 @@ namespace FileSystem
             CWD = _rootTreeObject;
         }
 
-        public ObjectDescriptor GetObjectDescriptor(string path)
+        public ObjectDescriptor GetObjectDescriptor(string name)
         {
+            var path = GetPath(name);
             return GetTreeObject(path)?.Descriptor;
         }
 
