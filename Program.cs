@@ -7,7 +7,9 @@ namespace FileSystem
         private static void Main(string[] args)
         {
             var fs = new FileSystem(100);
-            
+
+            #region lab4
+            /*
             Console.WriteLine();
             var filename = "file.txt";
             fs.CreateFile(filename);
@@ -78,8 +80,11 @@ namespace FileSystem
             fh = fs.OpenFile("document1.txt");
             fh.Read( 10);
             fs.Ls();
-            
-            
+            */
+
+            #endregion lab4
+
+
             Console.WriteLine();
 
             fs.MakeDir("dir1");
@@ -103,6 +108,8 @@ namespace FileSystem
             Console.WriteLine();
             fs.Symlink("/dir1", "/a/b/l1");
             fs.Ls("/a/b");
+
+            fs.OpenFile("/a/b/l1/dir2/file.txt");
 
         }
     }

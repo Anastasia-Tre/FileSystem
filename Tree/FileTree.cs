@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FileSystem.Descriptors;
-using FileSystem.Tree;
 
 namespace FileSystem.Tree
 {
@@ -40,7 +40,12 @@ namespace FileSystem.Tree
                 temp = temp?.Children.FirstOrDefault(obj => {
                     if (obj.Descriptor is FileDescriptor fileDescriptor)
                     {
-                        return fileDescriptor.Links.Contains(path);
+                        foreach (var link in fileDescriptor.Links)
+                        {
+                            return fileDescriptor.GetNameFromPath(link) ==
+                                   names[i];
+                        }
+                        //return fileDescriptor.Links.First(link => fileDescriptor.GetNameFromPath(link) == names[i]);
                     }
                     return obj.Descriptor.Name == names[i];
                 });
@@ -62,7 +67,19 @@ namespace FileSystem.Tree
 
         public TreeObject AddTreeObject(ObjectDescriptor descriptor)
         {
-            return CWD.AddChildren(new TreeObject(descriptor, CWD));
+            var path = descriptor.Path.Remove(descriptor.Path.LastIndexOf('/'));
+            var parent = GetTreeObject(path);
+            if (descriptor is SymLinkDescriptor symLinkDescriptor)
+            {
+                var linkedTreeObject = GetTreeObject(symLinkDescriptor.LinkedObject.Path);
+                var treeObject = new TreeObject(symLinkDescriptor,
+                    linkedTreeObject.Parent)
+                {
+                    Children = linkedTreeObject.Children
+                };
+                return parent.AddChildren(treeObject);
+            }
+            return parent.AddChildren(new TreeObject(descriptor, parent));
         }
 
         public void RemoveTreeObject(string path)

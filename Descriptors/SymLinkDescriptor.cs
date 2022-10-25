@@ -3,12 +3,12 @@ namespace FileSystem.Descriptors
 {
     internal class SymLinkDescriptor : ObjectDescriptor
     {
-        private readonly ObjectDescriptor _linkedObject;
+        public readonly ObjectDescriptor LinkedObject;
 
         public SymLinkDescriptor(string path, ObjectDescriptor obj) : base(path)
         {
             Type = ObjectDescriptors.Sym;
-            _linkedObject = obj;
+            LinkedObject = obj;
         }
 
         public override string Stat()
@@ -18,7 +18,7 @@ namespace FileSystem.Descriptors
 
         public override string GetType()
         {
-            return $"{Type},{Id} -> {_linkedObject.Path}";
+            return $"{Type},{Id} -> {LinkedObject.Path}";
         }
     }
 }
