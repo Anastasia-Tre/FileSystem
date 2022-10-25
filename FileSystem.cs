@@ -127,20 +127,19 @@ namespace FileSystem
         public void Link(string name1, string name2)
         {
             var descriptor = _tree.GetObjectDescriptor(name1);
-            if (descriptor is DirDescriptor)
+            switch (descriptor)
             {
-                Console.WriteLine($"Link for directories is not allowed");
-                return;
-            }
-
-            if (descriptor is FileDescriptor fileDescriptor)
-            {
-                var path2 = _tree.GetPath(name2);
-                fileDescriptor.AddLink(path2);
-            }
-            if (descriptor is SymLinkDescriptor symLinkDescriptor)
-            {
-               
+                case DirDescriptor:
+                    Console.WriteLine($"Link for directories is not allowed");
+                    return;
+                case FileDescriptor fileDescriptor:
+                {
+                    var path2 = _tree.GetPath(name2);
+                    fileDescriptor.AddLink(path2);
+                    break;
+                }
+                case SymLinkDescriptor symLinkDescriptor:
+                    break;
             }
             Console.WriteLine($"The link {name2} was created");
         }
@@ -149,27 +148,26 @@ namespace FileSystem
         {
             var path = _tree.GetPath(name); // remove
             var descriptor = _tree.GetObjectDescriptor(name);
-            if (descriptor is DirDescriptor)
+            switch (descriptor)
             {
-                Console.WriteLine($"Unlink for directories is not allowed");
-                return;
-            }
-            
-            if (descriptor is FileDescriptor fileDescriptor)
-            {
-                fileDescriptor.RemoveLink(path);
-                if (fileDescriptor.CanBeRemoved())
+                case DirDescriptor:
+                    Console.WriteLine($"Unlink for directories is not allowed");
+                    return;
+                case FileDescriptor fileDescriptor:
                 {
-                    FileHandler.RemoveFile(fileDescriptor);
-                    _tree.RemoveTreeObject(path);
+                    fileDescriptor.RemoveLink(path);
+                    if (fileDescriptor.CanBeRemoved())
+                    {
+                        FileHandler.RemoveFile(fileDescriptor);
+                        _tree.RemoveTreeObject(path);
+                    }
+                    break;
                 }
-            }
-            if (descriptor is SymLinkDescriptor symLinkDescriptor)
-            {
-                
+                case SymLinkDescriptor symLinkDescriptor:
+                    break;
             }
 
-            Console.WriteLine($"The file {name} was unlinked");
+            Console.WriteLine($"The object {name} was unlinked");
         }
 
         public void Truncate(string name, int size)
