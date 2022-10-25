@@ -6,25 +6,68 @@ namespace FileSystem
 {
     internal class FileTree
     {
-        private TreeObject _current;
-        private TreeObject _rootTreeObject;
+        public static int ObjectNumber;
+        public TreeObject CWD;
+        private readonly TreeObject _rootTreeObject;
 
         public FileTree(ObjectDescriptor rootDescriptor)
         {
             _rootTreeObject = new TreeObject(rootDescriptor, null);
-            _current = _rootTreeObject;
+            _rootTreeObject.Parent = _rootTreeObject;
+            CWD = _rootTreeObject;
         }
 
         public ObjectDescriptor GetObjectDescriptor(string path)
         {
-            var names = path.Split('/');
-            foreach (var name in names)
-            {
-                _current = _current.Children.First(obj => obj.Descriptor.Name == name);
-            }
-            return _current.Descriptor;
+            return GetTreeObject(path)?.Descriptor;
         }
 
+        public string GetPath(string name)
+        {
+            if (name.StartsWith('/')) return name;
+            return CWD.Descriptor.Path == "/" ? $"/{name}" : $"{CWD.Descriptor.Path}/{name}";
+        }
+
+        private TreeObject GetTreeObject(string path)
+        {
+            if (path == "/") return _rootTreeObject;
+            var names = path.Split('/');
+            var temp = _rootTreeObject;
+            for (var i = 1; i < names.Length; i++)
+            {
+                temp = temp?.Children.FirstOrDefault(obj =>
+                {
+                    if (obj.Descriptor is FileDescriptor fileDescriptor)
+                    {
+                        return fileDescriptor.Links.Contains(path);
+                    }
+                    return obj.Descriptor.Name == names[i];
+                });
+            }
+            return temp;
+        }
+
+        public void Cd(string path)
+        {
+            CWD = GetTreeObject(path);
+        }
+
+        public List<ObjectDescriptor> Ls(string path)
+        {
+            var startObject = GetTreeObject(path);
+            return startObject.Children.Select(treeObject => treeObject.Descriptor).ToList();
+        }
+
+        public TreeObject AddTreeObject(ObjectDescriptor descriptor)
+        {
+            return CWD.AddChildren(new TreeObject(descriptor, CWD));
+        }
+
+        public void RemoveTreeObject(string path)
+        {
+            var treeObject = GetTreeObject(path);
+            treeObject.Parent.RemoveChildren(treeObject);
+        }
     }
 
     internal class TreeObject
@@ -37,18 +80,20 @@ namespace FileSystem
         {
             Descriptor = descriptor;
             Parent = parent;
-            if (parent != null) Parent.AddChildren(this);
             Children = new List<TreeObject>();
+            FileTree.ObjectNumber++;
         }
 
-        public void AddChildren(TreeObject treeObject)
+        public TreeObject AddChildren(TreeObject treeObject)
         {
             Children.Add(treeObject);
+            return treeObject;
         }
 
         public void RemoveChildren(TreeObject treeObject)
         {
             Children.Remove(treeObject);
+            FileTree.ObjectNumber--;
         }
     }
 }
