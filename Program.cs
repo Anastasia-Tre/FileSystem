@@ -109,9 +109,19 @@ namespace FileSystem
             fs.Symlink("/dir1", "/a/b/l1");
             fs.Ls("/a/b");
 
+            Console.WriteLine();
             fs.OpenFile("/a/b/l1/dir2/file.txt");
-            fs.Cd("../");
+            fs.ShowStat("./../../dir1/././dir2/file.txt");
+            fs.Symlink("./../../dir1/././dir2/file.txt", "/dir1/l2");
+            fs.Cd("/a/b");
+            fs.OpenFile("l1/l2");
+
+            Console.WriteLine();
             fs.Cd("/");
+            fs.Unlink("/dir1/l2");
+            fs.Unlink("/a/b/l1");
+            fs.Unlink("dir1/dir2/file.txt");
+            fs.Unlink("/dir1/dir2");
         }
     }
 }

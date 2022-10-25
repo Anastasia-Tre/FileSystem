@@ -174,10 +174,14 @@ namespace FileSystem
         {
             try
             {
-                var descriptor = (FileDescriptor)_tree.GetObjectDescriptor(name);
-                var fd = new FileHandler(descriptor);
-                Console.WriteLine(
-                    $"The file {name} was opened, id of descriptor = {descriptor.Id}");
+                var fd = _tree.GetObjectDescriptor(name) switch
+                {
+                    SymLinkDescriptor desc => new FileHandler((FileDescriptor)desc.LinkedObject),
+                    FileDescriptor fileDesc => new FileHandler(fileDesc),
+                    _ => null
+                };
+
+                Console.WriteLine($"The file {name} was opened");
                 return fd;
             }
             catch (Exception)

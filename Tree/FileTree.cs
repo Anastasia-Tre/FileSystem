@@ -37,7 +37,10 @@ namespace FileSystem.Tree
             var temp = _rootTreeObject;
             for (var i = 1; i < names.Length; i++)
             {
-                if (names[i] == ".") names[i] = temp.Descriptor.Name;
+                if (names[i] == ".")
+                {
+                    continue;
+                }
                 if (names[i] == "..")
                 {
                     temp = temp.Parent;
@@ -61,8 +64,9 @@ namespace FileSystem.Tree
 
         public void Cd(string name)
         {
-            var path = GetPath(name);
-            CWD = GetTreeObject(path);
+            var treeObject = GetTreeObject(GetPath(name));
+            if (treeObject == null) return;
+            CWD = GetTreeObject(GetPath(name));
         }
 
         public List<ObjectDescriptor> Ls(string path)
