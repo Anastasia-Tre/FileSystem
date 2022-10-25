@@ -2,7 +2,7 @@
 using System.Linq;
 using FileSystem.Descriptors;
 
-namespace FileSystem
+namespace FileSystem.FileTree
 {
     internal class FileTree
     {
@@ -36,8 +36,7 @@ namespace FileSystem
             var temp = _rootTreeObject;
             for (var i = 1; i < names.Length; i++)
             {
-                temp = temp?.Children.FirstOrDefault(obj =>
-                {
+                temp = temp?.Children.FirstOrDefault(obj => {
                     if (obj.Descriptor is FileDescriptor fileDescriptor)
                     {
                         return fileDescriptor.Links.Contains(path);
@@ -69,33 +68,6 @@ namespace FileSystem
         {
             var treeObject = GetTreeObject(path);
             treeObject.Parent.RemoveChildren(treeObject);
-        }
-    }
-
-    internal class TreeObject
-    {
-        public TreeObject Parent;
-        public ObjectDescriptor Descriptor;
-        public List<TreeObject> Children;
-
-        public TreeObject(ObjectDescriptor descriptor, TreeObject parent)
-        {
-            Descriptor = descriptor;
-            Parent = parent;
-            Children = new List<TreeObject>();
-            FileTree.ObjectNumber++;
-        }
-
-        public TreeObject AddChildren(TreeObject treeObject)
-        {
-            Children.Add(treeObject);
-            return treeObject;
-        }
-
-        public void RemoveChildren(TreeObject treeObject)
-        {
-            Children.Remove(treeObject);
-            FileTree.ObjectNumber--;
         }
     }
 }
