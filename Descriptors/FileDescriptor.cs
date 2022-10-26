@@ -5,10 +5,12 @@
         private int _openFileHandlersNumber;
         private int Nblock = 0;
         private int Size = 0;
+        public bool Created;
 
-        public FileDescriptor(string path) : base(path)
+        public FileDescriptor(string path, bool created = true) : base(path)
         {
             Type = ObjectDescriptors.File;
+            Created = created;
         }
 
         public void Truncate(int size)

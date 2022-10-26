@@ -69,7 +69,7 @@ namespace FileSystem
                 return null;
             }
 
-            var descriptor = _tree.GetObjectDescriptor(name);
+            var descriptor = _tree.GetObjectDescriptor(name) as FileDescriptor;
             if (descriptor == null)
             {
                 var file = new FileDescriptor(path);
@@ -78,8 +78,15 @@ namespace FileSystem
                 Console.WriteLine($"The file {name} was created");
                 return file;
             }
+            if (descriptor.Created == false)
+            {
+                descriptor.Created = true;
+                FileHandler.CreateFile(descriptor);
+                Console.WriteLine($"The file {name} was created");
+                return descriptor;
+            }
             Console.WriteLine($"The file {name} has been already created");
-            return (FileDescriptor)descriptor;
+            return descriptor;
         }
 
         public void Ls(string name = null) 
@@ -160,23 +167,29 @@ namespace FileSystem
 
         public FileHandler OpenFile(string name)
         {
-            try
-            {
-                var fd = _tree.GetObjectDescriptor(name) switch
-                {
-                    SymLinkDescriptor desc => new FileHandler((FileDescriptor)desc.LinkedObject),
-                    FileDescriptor fileDesc => new FileHandler(fileDesc),
-                    _ => null
-                };
-
-                Console.WriteLine($"The file {name} was opened");
-                return fd;
-            }
-            catch (Exception)
+            var id = FileHandler.GetId();
+            if (id == -1)
             {
                 Console.WriteLine("No empty file handlers");
                 return null;
             }
+            FileHandler fd = null;
+            switch (_tree.GetObjectDescriptor(name))
+            {
+                case SymLinkDescriptor desc:
+                    if (desc.LinkedObject is FileDescriptor { Created: true } fileDescriptor)
+                    {
+                        fd = new FileHandler(fileDescriptor, id);
+                        Console.WriteLine($"The file {name} was opened");
+                    }
+                    else Console.WriteLine($"No such object");
+                    break;
+                case FileDescriptor fileDesc:
+                    fd = new FileHandler(fileDesc, id);
+                    Console.WriteLine($"The file {name} was opened");
+                    break;
+            }
+            return fd;
         }
 
         public void Cd(string name)
@@ -189,6 +202,11 @@ namespace FileSystem
         {
             var path = _tree.GetPath(pathname);
             var obj = _tree.GetObjectDescriptor(objectName);
+            if (obj == null)
+            {
+                obj = new FileDescriptor(_tree.GetPath(objectName), false);
+                _tree.AddTreeObject(obj);
+            }
             _tree.AddTreeObject(new SymLinkDescriptor(path, obj));
             Console.WriteLine($"Create symlink {pathname} for {objectName}");
         }
