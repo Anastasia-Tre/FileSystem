@@ -122,6 +122,15 @@ namespace FileSystem
             fs.Unlink("/a/b/l1");
             fs.Unlink("dir1/dir2/file.txt");
             fs.Unlink("/dir1/dir2");
+
+            Console.WriteLine();
+            fs.MakeDir("some");
+            fs.Symlink("some", "dir1/dir2/data.txt");
+            fs.Ls("dir1/dir2");
+            fs.Link("/dir1/dir2/data.txt", "/a/b/document");
+            fs.Ls("/a/b");
+            fs.ShowStat("/a/b/document");
+            fs.ShowStat("/dir1/dir2/data.txt");
         }
     }
 }

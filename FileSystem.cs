@@ -17,17 +17,17 @@ namespace FileSystem
             Console.WriteLine("The file system was created");
         }
 
-        public void MakeDir(string name) // rewrite, maybe move to FileTree
+        public void MakeDir(string name)
         {
-            var tempCWD = _tree.CWD;
+            var pathCWD = _tree.CWD.Descriptor.Path;
             if (name.StartsWith('/')) _tree.Cd("/");
             var names = name.Split('/');
             foreach (var dirName in names)
             {
                 CreateDir(dirName);
-                Cd(dirName);
+                _tree.Cd(dirName);
             }
-            _tree.CWD = tempCWD;
+            _tree.Cd(pathCWD);
         }
 
         private DirDescriptor CreateDir(string name)
@@ -94,7 +94,8 @@ namespace FileSystem
             {
                 foreach (var link in obj.Links)
                 {
-                    Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
+                    if (link.StartsWith(dirname))
+                        Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
                 }
             }
         }
@@ -113,16 +114,18 @@ namespace FileSystem
         public void Link(string name1, string name2)
         {
             var descriptor = _tree.GetObjectDescriptor(name1);
+            var path2 = _tree.GetPath(name2);
             switch (descriptor)
             {
                 case DirDescriptor:
                     Console.WriteLine($"Link for directories is not allowed");
                     return;
-                default:
-                    descriptor.AddLink(_tree.GetPath(name2));
-                    Console.WriteLine($"The link {name2} was created");
+                case SymLinkDescriptor:
+                    _tree.AddTreeObject(descriptor, path2);
                     break;
             }
+            descriptor.AddLink(path2);
+            Console.WriteLine($"The link {name2} was created");
         }
 
         public void Unlink(string name)

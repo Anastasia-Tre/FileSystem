@@ -62,9 +62,11 @@ namespace FileSystem.Tree
             return startObject.Children.Select(treeObject => treeObject.Descriptor).ToList();
         }
 
-        public TreeObject AddTreeObject(ObjectDescriptor descriptor)
+        public TreeObject AddTreeObject(ObjectDescriptor descriptor, string objectPath = null)
         {
-            var path = descriptor.Path.Remove(descriptor.Path.LastIndexOf('/'));
+            var path = objectPath == null
+                ? descriptor.Path.Remove(descriptor.Path.LastIndexOf('/'))
+                : objectPath.Remove(objectPath.LastIndexOf('/'));
             var parent = GetTreeObject(path);
             if (descriptor is SymLinkDescriptor symLinkDescriptor)
             {
