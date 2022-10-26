@@ -80,7 +80,6 @@ namespace FileSystem
             }
             Console.WriteLine($"The file {name} has been already created");
             return (FileDescriptor)descriptor;
-
         }
 
         public void Ls(string name = null) 
@@ -97,18 +96,6 @@ namespace FileSystem
                 {
                     Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
                 }
-                /*
-                if (obj is FileDescriptor fileDescriptor)
-                {
-                    foreach (var link in fileDescriptor.Links)
-                    {
-                        Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"{obj.GetType()}   =>   {obj.Name}");
-                }*/
             }
         }
 
@@ -147,16 +134,16 @@ namespace FileSystem
                     Console.WriteLine($"Unlink for directories is not allowed");
                     return;
                 case FileDescriptor fileDescriptor:
-                    fileDescriptor.RemoveLink(path);
                     if (fileDescriptor.CanBeRemoved())
                     {
                         FileHandler.RemoveFile(fileDescriptor);
                         _tree.RemoveTreeObject(path);
                     }
+                    fileDescriptor.RemoveLink(path);
                     break;
                 case SymLinkDescriptor symLinkDescriptor:
-                    symLinkDescriptor.RemoveLink(path);
                     _tree.RemoveTreeObject(path);
+                    symLinkDescriptor.RemoveLink(path);
                     break;
             }
             Console.WriteLine($"The object {name} was unlinked");
@@ -200,6 +187,7 @@ namespace FileSystem
             var path = _tree.GetPath(pathname);
             var obj = _tree.GetObjectDescriptor(objectName);
             _tree.AddTreeObject(new SymLinkDescriptor(path, obj));
+            Console.WriteLine($"Create symlink {pathname} for {objectName}");
         }
     }
 }
