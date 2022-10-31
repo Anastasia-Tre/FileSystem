@@ -98,7 +98,7 @@ namespace FileSystem.Tree
             return true;
         }
 
-        public bool Check(string name)
+        public bool CanObjectBeCreated(string name)
         {
             if (CWD == null)
             {

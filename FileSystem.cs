@@ -19,7 +19,7 @@ namespace FileSystem
 
         public FileDescriptor CreateFile(string name)
         {
-            if (!_tree.Check(name)) return null;
+            if (!_tree.CanObjectBeCreated(name)) return null;
             var path = _tree.GetPath(name);
 
             if (_tree.GetObjectDescriptor(name) is not FileDescriptor descriptor)
@@ -155,7 +155,7 @@ namespace FileSystem
 
         public void MakeDir(string name)
         {
-            if (!_tree.Check(name)) return;
+            if (!_tree.CanObjectBeCreated(name)) return;
             var pathCWD = _tree.CWD.Descriptor.Path;
             if (name.StartsWith('/')) _tree.Cd("/");
             var names = name.Split('/');
@@ -169,7 +169,7 @@ namespace FileSystem
 
         private DirDescriptor CreateDir(string name)
         {
-            if (!_tree.Check(name)) return null;
+            if (!_tree.CanObjectBeCreated(name)) return null;
             var path = _tree.GetPath(name);
             var descriptor = _tree.GetObjectDescriptor(name);
             if (descriptor == null)
@@ -185,7 +185,7 @@ namespace FileSystem
 
         public void RmDir(string name)
         {
-            if (!_tree.Check(name)) return;
+            if (!_tree.CanObjectBeCreated(name)) return;
             if (_tree.RemoveTreeObject(name)) 
                 Console.WriteLine($"The directory {name} was deleted");
             else Console.WriteLine($"The directory {name} can not be deleted");
