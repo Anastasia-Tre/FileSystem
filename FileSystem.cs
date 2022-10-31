@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FileSystem.Descriptors;
 using FileSystem.Tree;
 
@@ -17,43 +18,15 @@ namespace FileSystem
             Console.WriteLine("The file system was created");
         }
 
-        public void MakeDir(string name)
-        {
-            var pathCWD = _tree.CWD.Descriptor.Path;
-            if (name.StartsWith('/')) _tree.Cd("/");
-            var names = name.Split('/');
-            foreach (var dirName in names)
-            {
-                CreateDir(dirName);
-                _tree.Cd(dirName);
-            }
-            _tree.Cd(pathCWD);
-        }
-
-        private DirDescriptor CreateDir(string name)
-        {
-            var path = _tree.GetPath(name);
-            if (FileTree.ObjectNumber >= _maxDescriptorsNumber) // move to FileTree
-            {
-                Console.WriteLine(
-                    "Cannot create new directory. Max number of objects in system has reached.");
-                return null;
-            }
-
-            var descriptor = _tree.GetObjectDescriptor(name);
-            if (descriptor == null)
-            {
-                var dir = new DirDescriptor(path, (DirDescriptor)_tree.CWD.Descriptor);
-                _tree.AddTreeObject(dir);
-                Console.WriteLine($"The directory {name} was created");
-                return dir;
-            }
-            Console.WriteLine($"The directory {name} has been already created");
-            return (DirDescriptor)descriptor;
-        }
+        #region file methods
 
         public FileDescriptor CreateFile(string name)
         {
+            if (_tree.CWD == null)
+            {
+                Console.WriteLine("No such directory");
+                return null;
+            }
             var path = _tree.GetPath(name);
             if (_maxFileNameLength < name.Length)
             {
@@ -91,6 +64,12 @@ namespace FileSystem
 
         public void Ls(string name = null) 
         {
+            if (_tree.CWD == null)
+            {
+                Console.WriteLine("No such directory");
+                return;
+            }
+
             var dirname = name == null ? _tree.CWD.Descriptor.Path : _tree.GetPath(name);
 
             Console.WriteLine($"List of objects in directory {dirname}");
@@ -99,10 +78,9 @@ namespace FileSystem
             
             foreach (var obj in _tree.Ls(dirname))
             {
-                foreach (var link in obj.Links)
+                foreach (var link in obj.Links.Where(link => link.StartsWith(dirname)))
                 {
-                    if (link.StartsWith(dirname))
-                        Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
+                    Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
                 }
             }
         }
@@ -192,6 +170,57 @@ namespace FileSystem
             return fd;
         }
 
+        #endregion
+
+        #region dir methods
+
+        public void MakeDir(string name)
+        {
+            if (_tree.CWD == null)
+            {
+                Console.WriteLine("No such directory");
+                return;
+            }
+            var pathCWD = _tree.CWD.Descriptor.Path;
+            if (name.StartsWith('/')) _tree.Cd("/");
+            var names = name.Split('/');
+            foreach (var dirName in names)
+            {
+                CreateDir(dirName);
+                _tree.Cd(dirName);
+            }
+            _tree.Cd(pathCWD);
+        }
+
+        private DirDescriptor CreateDir(string name)
+        {
+            var path = _tree.GetPath(name);
+            if (FileTree.ObjectNumber >= _maxDescriptorsNumber) // move to FileTree
+            {
+                Console.WriteLine(
+                    "Cannot create new directory. Max number of objects in system has reached.");
+                return null;
+            }
+
+            var descriptor = _tree.GetObjectDescriptor(name);
+            if (descriptor == null)
+            {
+                var dir = new DirDescriptor(path, (DirDescriptor)_tree.CWD.Descriptor);
+                _tree.AddTreeObject(dir);
+                Console.WriteLine($"The directory {name} was created");
+                return dir;
+            }
+            Console.WriteLine($"The directory {name} has been already created");
+            return (DirDescriptor)descriptor;
+        }
+
+        public void RmDir(string name)
+        {
+            if (_tree.RemoveTreeObject(name)) 
+                Console.WriteLine($"The directory {name} was deleted");
+            else Console.WriteLine($"The directory {name} can not be deleted");
+        }
+
         public void Cd(string name)
         {
             _tree.Cd(name);
@@ -210,5 +239,7 @@ namespace FileSystem
             _tree.AddTreeObject(new SymLinkDescriptor(path, obj));
             Console.WriteLine($"Create symlink {pathname} for {objectName}");
         }
+
+        #endregion
     }
 }

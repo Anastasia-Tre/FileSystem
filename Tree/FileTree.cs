@@ -81,10 +81,14 @@ namespace FileSystem.Tree
             return parent.AddChildren(new TreeObject(descriptor, parent));
         }
 
-        public void RemoveTreeObject(string path)
+        public bool RemoveTreeObject(string name)
         {
+            var path = GetPath(name);
             var treeObject = GetTreeObject(path);
+            if (treeObject.Children.Count > 0) return false;
             treeObject.Parent.RemoveChildren(treeObject);
+            if (treeObject == CWD) CWD = null;
+            return true;
         }
     }
 }

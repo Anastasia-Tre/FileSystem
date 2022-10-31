@@ -135,6 +135,14 @@ namespace FileSystem
             fs.OpenFile("/dir1/dir2/data.txt");
             fs.CreateFile("/some");
             fs.OpenFile("/dir1/dir2/data.txt");
+
+            Console.WriteLine();
+            fs.MakeDir("/1");
+            fs.MakeDir("/1/2");
+            fs.Cd("/1/2");
+            fs.RmDir("../2");
+            fs.Ls();
+            fs.CreateFile("file.txt");
         }
     }
 }
