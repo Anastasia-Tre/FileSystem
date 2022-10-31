@@ -7,12 +7,12 @@ namespace FileSystem.Tree
 {
     internal class FileTree
     {
-        private static int ObjectNumber;
+        private static int _objectNumber;
         private readonly int _maxDescriptorsNumber;
         private readonly int _maxFileNameLength = 128;
+        private readonly TreeObject _rootTreeObject;
 
         public TreeObject CWD;
-        private readonly TreeObject _rootTreeObject;
 
         public FileTree(ObjectDescriptor rootDescriptor, int maxDescrNumber)
         {
@@ -31,7 +31,9 @@ namespace FileSystem.Tree
         public string GetPath(string name)
         {
             if (name.StartsWith('/')) return name;
-            return CWD.Descriptor.Path == "/" ? $"/{name}" : $"{CWD.Descriptor.Path}/{name}";
+            return CWD.Descriptor.Path == "/"
+                ? $"/{name}"
+                : $"{CWD.Descriptor.Path}/{name}";
         }
 
         private TreeObject GetTreeObject(string path)
@@ -46,6 +48,7 @@ namespace FileSystem.Tree
                     result = result?.Parent;
                     continue;
                 }
+
                 result = result?.Children.FirstOrDefault(obj =>
                     obj.Descriptor.Links.Exists(link =>
                         obj.Descriptor.GetNameFromPath(link) == names[i]));
@@ -63,20 +66,23 @@ namespace FileSystem.Tree
         public List<ObjectDescriptor> Ls(string path)
         {
             var startObject = GetTreeObject(path);
-            return startObject.Children.Select(treeObject => treeObject.Descriptor).ToList();
+            return startObject.Children
+                .Select(treeObject => treeObject.Descriptor).ToList();
         }
 
-        public TreeObject AddTreeObject(ObjectDescriptor descriptor, string objectPath = null)
+        public TreeObject AddTreeObject(ObjectDescriptor descriptor,
+            string objectPath = null)
         {
             var path = objectPath == null
                 ? descriptor.Path.Remove(descriptor.Path.LastIndexOf('/'))
                 : objectPath.Remove(objectPath.LastIndexOf('/'));
             var parent = GetTreeObject(path);
-            ObjectNumber++;
+            _objectNumber++;
 
             if (descriptor is SymLinkDescriptor symLinkDescriptor)
             {
-                var linkedTreeObject = GetTreeObject(symLinkDescriptor.LinkedObject.Path);
+                var linkedTreeObject =
+                    GetTreeObject(symLinkDescriptor.LinkedObject.Path);
                 var treeObject = new TreeObject(symLinkDescriptor,
                     linkedTreeObject.Parent)
                 {
@@ -94,7 +100,7 @@ namespace FileSystem.Tree
             if (treeObject.Children.Count > 0) return false;
             treeObject.Parent.RemoveChildren(treeObject);
             if (treeObject == CWD) CWD = null;
-            ObjectNumber--;
+            _objectNumber--;
             return true;
         }
 
@@ -105,23 +111,19 @@ namespace FileSystem.Tree
                 Console.WriteLine("No such directory");
                 return false;
             }
-
-            if (ObjectNumber >= _maxDescriptorsNumber)
+            if (_objectNumber >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
                     "Cannot create new file. Max number of objects in system has reached.");
                 return false;
             }
-
             if (_maxFileNameLength < name.Length)
             {
                 Console.WriteLine(
                     "Cannot create new object. The name is too long.");
                 return false;
             }
-
             return true;
         }
-
     }
 }

@@ -5,9 +5,9 @@ namespace FileSystem.Tree
 {
     internal class TreeObject
     {
-        public TreeObject Parent;
-        public ObjectDescriptor Descriptor;
         public List<TreeObject> Children;
+        public ObjectDescriptor Descriptor;
+        public TreeObject Parent;
 
         public TreeObject(ObjectDescriptor descriptor, TreeObject parent)
         {

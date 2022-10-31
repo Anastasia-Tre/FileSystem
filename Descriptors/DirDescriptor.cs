@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FileSystem.Descriptors
+﻿namespace FileSystem.Descriptors
 {
     internal class DirDescriptor : ObjectDescriptor
     {

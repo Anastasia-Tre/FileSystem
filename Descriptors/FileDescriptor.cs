@@ -3,9 +3,9 @@
     internal class FileDescriptor : ObjectDescriptor
     {
         private int _openFileHandlersNumber;
-        private int Nblock = 0;
-        private int Size = 0;
         public bool Created;
+        private int Nblock;
+        private int Size;
 
         public FileDescriptor(string path, bool created = true) : base(path)
         {

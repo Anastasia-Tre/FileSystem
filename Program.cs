@@ -9,7 +9,7 @@ namespace FileSystem
             var fs = new FileSystem(100);
 
             #region lab4
-            
+
             Console.WriteLine();
             var filename = "file.txt";
             fs.CreateFile(filename);
@@ -63,7 +63,6 @@ namespace FileSystem
             fileHandler.CloseFile();
 
 
-            
             Console.WriteLine();
             fs.CreateFile("file1.txt");
             fs.Link("file1.txt", "document1.txt");
@@ -78,9 +77,8 @@ namespace FileSystem
             fh.Write(10, "abcdefghij");
             fh.CloseFile();
             fh = fs.OpenFile("document1.txt");
-            fh.Read( 10);
+            fh.Read(10);
             fs.Ls();
-            
 
             #endregion lab4
 

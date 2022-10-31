@@ -1,5 +1,4 @@
-﻿
-namespace FileSystem.Descriptors
+﻿namespace FileSystem.Descriptors
 {
     internal class SymLinkDescriptor : ObjectDescriptor
     {

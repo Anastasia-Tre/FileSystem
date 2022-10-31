@@ -5,9 +5,9 @@ namespace FileSystem.Descriptors
     internal abstract class ObjectDescriptor
     {
         protected static int NextId = 1;
+        public List<string> Links;
 
         protected int Nlink;
-        public List<string> Links;
 
         protected ObjectDescriptor(string path)
         {
