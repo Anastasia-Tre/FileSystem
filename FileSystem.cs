@@ -8,13 +8,10 @@ namespace FileSystem
     internal class FileSystem
     {
         private readonly FileTree _tree;
-        private readonly int _maxDescriptorsNumber;
-        private readonly int _maxFileNameLength = 128;
 
         public FileSystem(int maxDescrNumber)
         {
-            _maxDescriptorsNumber = maxDescrNumber;
-            _tree = new FileTree(new DirDescriptor("/", null));
+            _tree = new FileTree(new DirDescriptor("/", null), maxDescrNumber);
             Console.WriteLine("The file system was created");
         }
 
@@ -22,28 +19,10 @@ namespace FileSystem
 
         public FileDescriptor CreateFile(string name)
         {
-            if (_tree.CWD == null)
-            {
-                Console.WriteLine("No such directory");
-                return null;
-            }
+            if (!_tree.Check(name)) return null;
             var path = _tree.GetPath(name);
-            if (_maxFileNameLength < name.Length)
-            {
-                Console.WriteLine(
-                    "Cannot create new file. Too long file name.");
-                return null;
-            }
 
-            if (FileTree.ObjectNumber >= _maxDescriptorsNumber)
-            {
-                Console.WriteLine(
-                    "Cannot create new file. Max number of objects in system has reached.");
-                return null;
-            }
-
-            var descriptor = _tree.GetObjectDescriptor(name) as FileDescriptor;
-            if (descriptor == null)
+            if (_tree.GetObjectDescriptor(name) is not FileDescriptor descriptor)
             {
                 var file = new FileDescriptor(path);
                 _tree.AddTreeObject(file);
@@ -176,11 +155,7 @@ namespace FileSystem
 
         public void MakeDir(string name)
         {
-            if (_tree.CWD == null)
-            {
-                Console.WriteLine("No such directory");
-                return;
-            }
+            if (!_tree.Check(name)) return;
             var pathCWD = _tree.CWD.Descriptor.Path;
             if (name.StartsWith('/')) _tree.Cd("/");
             var names = name.Split('/');
@@ -194,14 +169,8 @@ namespace FileSystem
 
         private DirDescriptor CreateDir(string name)
         {
+            if (!_tree.Check(name)) return null;
             var path = _tree.GetPath(name);
-            if (FileTree.ObjectNumber >= _maxDescriptorsNumber) // move to FileTree
-            {
-                Console.WriteLine(
-                    "Cannot create new directory. Max number of objects in system has reached.");
-                return null;
-            }
-
             var descriptor = _tree.GetObjectDescriptor(name);
             if (descriptor == null)
             {
@@ -210,12 +179,13 @@ namespace FileSystem
                 Console.WriteLine($"The directory {name} was created");
                 return dir;
             }
-            Console.WriteLine($"The directory {name} has been already created");
+            //Console.WriteLine($"The directory {name} has been already created");
             return (DirDescriptor)descriptor;
         }
 
         public void RmDir(string name)
         {
+            if (!_tree.Check(name)) return;
             if (_tree.RemoveTreeObject(name)) 
                 Console.WriteLine($"The directory {name} was deleted");
             else Console.WriteLine($"The directory {name} can not be deleted");

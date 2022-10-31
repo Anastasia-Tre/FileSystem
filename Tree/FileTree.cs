@@ -7,12 +7,16 @@ namespace FileSystem.Tree
 {
     internal class FileTree
     {
-        public static int ObjectNumber;
+        private static int ObjectNumber;
+        private readonly int _maxDescriptorsNumber;
+        private readonly int _maxFileNameLength = 128;
+
         public TreeObject CWD;
         private readonly TreeObject _rootTreeObject;
 
-        public FileTree(ObjectDescriptor rootDescriptor)
+        public FileTree(ObjectDescriptor rootDescriptor, int maxDescrNumber)
         {
+            _maxDescriptorsNumber = maxDescrNumber;
             _rootTreeObject = new TreeObject(rootDescriptor, null);
             _rootTreeObject.Parent = _rootTreeObject;
             CWD = _rootTreeObject;
@@ -68,6 +72,8 @@ namespace FileSystem.Tree
                 ? descriptor.Path.Remove(descriptor.Path.LastIndexOf('/'))
                 : objectPath.Remove(objectPath.LastIndexOf('/'));
             var parent = GetTreeObject(path);
+            ObjectNumber++;
+
             if (descriptor is SymLinkDescriptor symLinkDescriptor)
             {
                 var linkedTreeObject = GetTreeObject(symLinkDescriptor.LinkedObject.Path);
@@ -88,7 +94,34 @@ namespace FileSystem.Tree
             if (treeObject.Children.Count > 0) return false;
             treeObject.Parent.RemoveChildren(treeObject);
             if (treeObject == CWD) CWD = null;
+            ObjectNumber--;
             return true;
         }
+
+        public bool Check(string name)
+        {
+            if (CWD == null)
+            {
+                Console.WriteLine("No such directory");
+                return false;
+            }
+
+            if (ObjectNumber >= _maxDescriptorsNumber)
+            {
+                Console.WriteLine(
+                    "Cannot create new file. Max number of objects in system has reached.");
+                return false;
+            }
+
+            if (_maxFileNameLength < name.Length)
+            {
+                Console.WriteLine(
+                    "Cannot create new object. The name is too long.");
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }

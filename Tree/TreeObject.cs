@@ -14,7 +14,6 @@ namespace FileSystem.Tree
             Descriptor = descriptor;
             Parent = parent;
             Children = new List<TreeObject>();
-            FileTree.ObjectNumber++;
         }
 
         public TreeObject AddChildren(TreeObject treeObject)
@@ -26,7 +25,6 @@ namespace FileSystem.Tree
         public void RemoveChildren(TreeObject treeObject)
         {
             Children.Remove(treeObject);
-            FileTree.ObjectNumber--;
         }
     }
 }
