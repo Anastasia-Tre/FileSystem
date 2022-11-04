@@ -114,7 +114,7 @@ namespace FileSystem.Tree
             if (_objectNumber >= _maxDescriptorsNumber)
             {
                 Console.WriteLine(
-                    "Cannot create new file. Max number of objects in system has reached.");
+                    "Cannot create new object. Max number of objects in system has reached.");
                 return false;
             }
             if (_maxFileNameLength < name.Length)
