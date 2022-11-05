@@ -36,7 +36,7 @@ namespace FileSystem.Tree
                 : $"{CWD.Descriptor.Path}/{name}";
         }
 
-        private TreeObject GetTreeObject(string path)
+        public TreeObject GetTreeObject(string path)
         {
             var names = path.Split('/');
             var result = _rootTreeObject;
@@ -60,12 +60,12 @@ namespace FileSystem.Tree
         {
             var treeObject = GetTreeObject(GetPath(name));
             if (treeObject == null) return;
-            CWD = GetTreeObject(GetPath(name));
+            CWD = treeObject;
         }
 
-        public List<ObjectDescriptor> Ls(string path)
+        public List<ObjectDescriptor> Ls(TreeObject startObject)
         {
-            var startObject = GetTreeObject(path);
+            //var startObject = GetTreeObject(descriptor.Path);
             return startObject.Children
                 .Select(treeObject => treeObject.Descriptor).ToList();
         }

@@ -146,11 +146,19 @@ namespace FileSystem
                 ? _tree.CWD.Descriptor.Path
                 : _tree.GetPath(name);
 
-            Console.WriteLine($"List of objects in directory {dirname}");
-            Console.WriteLine($"{_tree.CWD.Descriptor.Type},{_tree.CWD.Descriptor.Id}   =>   .");
-            Console.WriteLine($"{_tree.CWD.Parent.Descriptor.Type},{_tree.CWD.Parent.Descriptor.Id}   =>   ..");
+            var treeObject = _tree.GetTreeObject(dirname);
+            var descriptor = treeObject.Descriptor;
+            if (treeObject.Descriptor is SymLinkDescriptor symLinkDescriptor)
+            {
+                descriptor = symLinkDescriptor.LinkedObject;
+                dirname = symLinkDescriptor.LinkedObject.Path;
+            }
 
-            foreach (var obj in _tree.Ls(dirname))
+            Console.WriteLine($"List of objects in directory {dirname}");
+            Console.WriteLine($"{descriptor.Type},{descriptor.Id}   =>   .");
+            Console.WriteLine($"{treeObject.Parent.Descriptor.Type},{treeObject.Parent.Descriptor.Id}   =>   ..");
+
+            foreach (var obj in _tree.Ls(treeObject))
             foreach (var link in obj.Links.Where(link => link.StartsWith(dirname)))
                 Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
         }

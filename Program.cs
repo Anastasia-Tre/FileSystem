@@ -146,7 +146,13 @@ namespace FileSystem
 
             fs.MakeDir("/dir1");
             fs.CreateFile("/dir1/fileindir1.txt");
+
+
+
+            /*
             fs.Symlink("/dir1", "/symtodir1");
+            fs.Ls("/dir1");
+            fs.Ls("/symtodir1");
             fs.Ls();
             fs.Symlink("/symtodir1", "/symtosym");
             fs.ShowStat("/symtosym");
@@ -158,7 +164,7 @@ namespace FileSystem
             fs.Cd("/cycle");
             fs.Ls();
             fs.Ls("/dir1");
-
+            */
 
         }
     }
