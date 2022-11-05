@@ -8,7 +8,7 @@ namespace FileSystem
         {
             var fs = new FileSystem(100);
 
-            /*
+            
             #region lab4
 
             Console.WriteLine();
@@ -59,8 +59,6 @@ namespace FileSystem
             Console.WriteLine();
             fileHandler.Seek(0);
             fileHandler.Read(10);
-
-            Console.WriteLine();
             fileHandler.CloseFile();
 
 
@@ -88,7 +86,6 @@ namespace FileSystem
 
             fs.MakeDir("dir1");
             fs.ShowStat("dir1");
-            fs.Ls();
 
             Console.WriteLine();
             fs.MakeDir("dir1/dir2");
@@ -99,7 +96,7 @@ namespace FileSystem
             Console.WriteLine();
             fs.Cd("dir1/dir2");
             fs.Ls();
-            fs.CreateFile("file.txt");
+            fs.CreateFile("file3.txt");
             fs.MakeDir("/a/b");
             fs.Ls();
             fs.Ls("/");
@@ -109,9 +106,9 @@ namespace FileSystem
             fs.Ls("/a/b");
 
             Console.WriteLine();
-            fs.OpenFile("/a/b/l1/dir2/file.txt");
-            fs.ShowStat("./../../dir1/././dir2/file.txt");
-            fs.Symlink("./../../dir1/././dir2/file.txt", "/dir1/l2");
+            fs.OpenFile("/a/b/l1/dir2/file3.txt");
+            fs.ShowStat("./../../dir1/././dir2/file3.txt");
+            fs.Symlink("./../../dir1/././dir2/file3.txt", "/dir1/l2");
             fs.Cd("/a/b");
             fs.OpenFile("l1/l2");
 
@@ -119,7 +116,7 @@ namespace FileSystem
             fs.Cd("/");
             fs.Unlink("/dir1/l2");
             fs.Unlink("/a/b/l1");
-            fs.Unlink("dir1/dir2/file.txt");
+            fs.Unlink("dir1/dir2/file3.txt");
             fs.Unlink("/dir1/dir2");
 
             Console.WriteLine();
@@ -142,30 +139,6 @@ namespace FileSystem
             fs.RmDir("../2");
             fs.Ls();
             fs.CreateFile("file.txt");
-            */
-
-            fs.MakeDir("/dir1");
-            fs.CreateFile("/dir1/fileindir1.txt");
-
-
-
-            /*
-            fs.Symlink("/dir1", "/symtodir1");
-            fs.Ls("/dir1");
-            fs.Ls("/symtodir1");
-            fs.Ls();
-            fs.Symlink("/symtodir1", "/symtosym");
-            fs.ShowStat("/symtosym");
-            fs.Ls();
-            fs.Cd("/symtosym");
-            fs.Ls();
-            fs.Symlink("/dir1", "/dir1/cyclesym");
-            fs.Symlink("/dir1/cyclesym", "/cycle");
-            fs.Cd("/cycle");
-            fs.Ls();
-            fs.Ls("/dir1");
-            */
-
         }
     }
 }

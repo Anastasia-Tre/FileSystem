@@ -213,6 +213,10 @@ namespace FileSystem
                 obj = new FileDescriptor(_tree.GetPath(objectName), false);
                 _tree.AddTreeObject(obj);
             }
+            if (obj is SymLinkDescriptor symLinkDescriptor)
+            {
+                obj = symLinkDescriptor.LinkedObject;
+            }
             _tree.AddTreeObject(new SymLinkDescriptor(path, obj));
             Console.WriteLine($"Create symlink {pathname} for {objectName}");
         }
