@@ -15,6 +15,17 @@ namespace FileSystem
             Console.WriteLine("The file system was created");
         }
 
+        public void ShowStat(string name)
+        {
+            var descriptor = _tree.GetObjectDescriptor(name);
+            if (descriptor != null)
+            {
+                Console.WriteLine($"Information for {name}:\n    {descriptor.Stat()}");
+                return;
+            }
+            Console.WriteLine($"No object with the name {name} in system");
+        }
+
         #region file methods
 
         public FileDescriptor CreateFile(string name)
@@ -41,38 +52,6 @@ namespace FileSystem
 
             Console.WriteLine($"The file {name} has been already created");
             return descriptor;
-        }
-
-        public void Ls(string name = null)
-        {
-            if (_tree.CWD == null)
-            {
-                Console.WriteLine("No such directory");
-                return;
-            }
-
-            var dirname = name == null
-                ? _tree.CWD.Descriptor.Path
-                : _tree.GetPath(name);
-
-            Console.WriteLine($"List of objects in directory {dirname}");
-            Console.WriteLine($"{_tree.CWD.Descriptor.Type},{_tree.CWD.Descriptor.Id}   =>   .");
-            Console.WriteLine($"{_tree.CWD.Parent.Descriptor.Type},{_tree.CWD.Parent.Descriptor.Id}   =>   ..");
-
-            foreach (var obj in _tree.Ls(dirname))
-            foreach (var link in obj.Links.Where(link => link.StartsWith(dirname)))
-                Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
-        }
-
-        public void ShowStat(string name)
-        {
-            var descriptor = _tree.GetObjectDescriptor(name);
-            if (descriptor != null)
-            {
-                Console.WriteLine($"Information for {name}:\n    {descriptor.Stat()}");
-                return;
-            }
-            Console.WriteLine($"No object with the name {name} in system");
         }
 
         public void Link(string name1, string name2)
@@ -154,6 +133,27 @@ namespace FileSystem
         #endregion
 
         #region dir methods
+
+        public void Ls(string name = null)
+        {
+            if (_tree.CWD == null)
+            {
+                Console.WriteLine("No such directory");
+                return;
+            }
+
+            var dirname = name == null
+                ? _tree.CWD.Descriptor.Path
+                : _tree.GetPath(name);
+
+            Console.WriteLine($"List of objects in directory {dirname}");
+            Console.WriteLine($"{_tree.CWD.Descriptor.Type},{_tree.CWD.Descriptor.Id}   =>   .");
+            Console.WriteLine($"{_tree.CWD.Parent.Descriptor.Type},{_tree.CWD.Parent.Descriptor.Id}   =>   ..");
+
+            foreach (var obj in _tree.Ls(dirname))
+            foreach (var link in obj.Links.Where(link => link.StartsWith(dirname)))
+                Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
+        }
 
         public void MakeDir(string name)
         {
