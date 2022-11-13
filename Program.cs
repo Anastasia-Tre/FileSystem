@@ -8,7 +8,6 @@ namespace FileSystem
         {
             var fs = new FileSystem(100);
 
-            
             #region lab4
 
             Console.WriteLine();
@@ -65,22 +64,27 @@ namespace FileSystem
             Console.WriteLine();
             fs.CreateFile("file1.txt");
             fs.Link("file1.txt", "document1.txt");
+
             var fh = fs.OpenFile("file1.txt");
             fh.Write(10, "0123456789");
             fh.CloseFile();
+
             fs.Ls();
             fs.Unlink("file1.txt");
             fs.Ls();
+
             fs.CreateFile("file1.txt");
             fh = fs.OpenFile("file1.txt");
             fh.Write(10, "abcdefghij");
             fh.CloseFile();
+
             fh = fs.OpenFile("document1.txt");
             fh.Read(10);
             fs.Ls();
 
             #endregion lab4
 
+            #region lab5
 
             Console.WriteLine();
 
@@ -108,7 +112,8 @@ namespace FileSystem
             Console.WriteLine();
             fs.OpenFile("/a/b/l1/dir2/file3.txt");
             fs.ShowStat("./../../dir1/././dir2/file3.txt");
-            fs.Symlink("./../../dir1/././dir2/file3.txt", "/dir1/l2");
+            fs.Symlink("./../../dir1/././dir2/file3.txt", 
+                "/dir1/l2");
             fs.Cd("/a/b");
             fs.OpenFile("l1/l2");
 
@@ -139,6 +144,8 @@ namespace FileSystem
             fs.RmDir("../2");
             fs.Ls();
             fs.CreateFile("file.txt");
+
+            #endregion
         }
     }
 }

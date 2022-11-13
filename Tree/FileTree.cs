@@ -65,7 +65,6 @@ namespace FileSystem.Tree
 
         public List<ObjectDescriptor> Ls(TreeObject startObject)
         {
-            //var startObject = GetTreeObject(descriptor.Path);
             return startObject.Children
                 .Select(treeObject => treeObject.Descriptor).ToList();
         }
