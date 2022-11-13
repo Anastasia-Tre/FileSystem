@@ -3,10 +3,14 @@
     internal class FileDescriptor : ObjectDescriptor
     {
         private int _openFileHandlersNumber;
+        public bool Created;
+        private int Nblock;
+        private int Size;
 
-        public FileDescriptor(string name, string path) : base(name, path)
+        public FileDescriptor(string path, bool created = true) : base(path)
         {
-            Type = ObjectDescriptors.FileDescriptor;
+            Type = ObjectDescriptors.File;
+            Created = created;
         }
 
         public void Truncate(int size)
@@ -32,6 +36,17 @@
         public bool CanBeRemoved()
         {
             return _openFileHandlersNumber == 0 && Links.Count == 0;
+        }
+
+        public override string Stat()
+        {
+            return $"id={Id}, type={Type}, " +
+                   $"nlink={Nlink}, size={Size}, nblock={Nblock}";
+        }
+
+        public override string GetType()
+        {
+            return $"{Type},{Id}";
         }
     }
 }

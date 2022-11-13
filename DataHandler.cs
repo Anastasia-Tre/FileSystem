@@ -61,12 +61,15 @@ namespace FileSystem
             if (Data[id][blockIndex + blockNumber] == null)
             {
                 descriptor.IncreaseNblock();
-                Data[id][blockIndex + blockNumber] = new string(char.MinValue, BlockSize);
+                Data[id][blockIndex + blockNumber] =
+                    new string(char.MinValue, BlockSize);
             }
 
-            Data[id][blockIndex + blockNumber] = Data[id][blockIndex + blockNumber]
+            Data[id][blockIndex + blockNumber] =
+                Data[id][blockIndex + blockNumber]
                     .Remove(blockOffset, size % BlockSize);
-            Data[id][blockIndex + blockNumber] = Data[id][blockIndex + blockNumber].Insert(
+            Data[id][blockIndex + blockNumber] =
+                Data[id][blockIndex + blockNumber].Insert(
                     blockOffset,
                     text.Substring(BlockSize * blockNumber, size % BlockSize));
 

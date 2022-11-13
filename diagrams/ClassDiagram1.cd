@@ -1,30 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="FileSystem.Descriptors.DirDescriptor">
-    <Position X="7.5" Y="2.75" Width="2.75" />
+    <Position X="15" Y="3.5" Width="3.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAEAAAIAAAAAAAA=</HashCode>
       <FileName>Descriptors\DirDescriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FileSystem.Descriptors.FileDescriptor">
-    <Position X="14.75" Y="2.5" Width="2.75" />
+    <Position X="7.25" Y="2" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AABQAAAAAAAAAAAAAAAAASEAAAAYAAAAAAAAAAAAEAA=</HashCode>
+      <HashCode>AABAAAAAAAAAgAAAAAAAASEBAAAYAAUAAAIAAAAAAAA=</HashCode>
       <FileName>Descriptors\FileDescriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FileSystem.Descriptors.ObjectDescriptor">
-    <Position X="11" Y="0.5" Width="3" />
+    <Position X="11.25" Y="1.25" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAkAIAAAAAAAQBAgAAAAAAAQIAAAAAAAA=</HashCode>
+      <HashCode>AAAiAAAAAAAAEAIkAAAAAAQAAgAAAAEACQIAAAAAAAA=</HashCode>
       <FileName>Descriptors\ObjectDescriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="FileSystem.Descriptors.ObjectDescriptors">
-    <Position X="8.25" Y="0.5" Width="1.5" />
+  <Class Name="FileSystem.Descriptors.SymLinkDescriptor">
+    <Position X="15" Y="1.25" Width="3.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAEAAAIAAAAAAAA=</HashCode>
+      <FileName>Descriptors\SymLinkDescriptor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="FileSystem.Descriptors.ObjectDescriptors">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAgAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Descriptors\ObjectDescriptors.cs</FileName>
     </TypeIdentifier>
   </Enum>

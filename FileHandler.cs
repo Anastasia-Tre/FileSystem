@@ -16,19 +16,25 @@ namespace FileSystem
         private readonly int _id = -1;
         private int _currentPosition;
 
-        public FileHandler(FileDescriptor descriptor)
+        public FileHandler(FileDescriptor descriptor, int id)
         {
+            _id = id;
+            FileHandlers[_id] = this;
+            _descriptor = descriptor;
+            _descriptor.OpenFileHandler();
+        }
+
+        public static int GetId()
+        {
+            var id = -1;
             for (var i = 0; i < MaxFileHandlersNumber; i++)
                 if (FileHandlers[i] == null)
                 {
-                    FileHandlers[i] = this;
-                    _id = i;
+                    id = i;
                     break;
                 }
 
-            if (_id == -1) throw new Exception();
-            _descriptor = descriptor;
-            _descriptor.OpenFileHandler();
+            return id;
         }
 
         public static void CreateFile(FileDescriptor descriptor)

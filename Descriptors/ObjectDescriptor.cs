@@ -2,20 +2,20 @@
 
 namespace FileSystem.Descriptors
 {
-    internal class ObjectDescriptor
+    internal abstract class ObjectDescriptor
     {
         protected static int NextId = 1;
-
         public List<string> Links;
-        protected int Nblock = 0;
-        protected int Size = 0;
 
-        public ObjectDescriptor(string name, string path)
+        protected int Nlink;
+
+        protected ObjectDescriptor(string path)
         {
             Id = NextId++;
-            Name = name;
+            Name = GetNameFromPath(path);
             Path = path;
             Links = new List<string> { path };
+            Nlink++;
         }
 
         public ObjectDescriptors Type { get; protected set; }
@@ -23,20 +23,24 @@ namespace FileSystem.Descriptors
         public string Name { get; }
         public string Path { get; }
 
-        public string Stat()
-        {
-            return $"id={Id}, type={Type}, " +
-                   $"nlink={Links.Count}, size={Size}, nblock={Nblock}";
-        }
+        public abstract string Stat();
+        public abstract string GetType();
 
         public void AddLink(string path)
         {
             Links.Add(path);
+            Nlink++;
         }
 
         public void RemoveLink(string path)
         {
             Links.Remove(path);
+            Nlink--;
+        }
+
+        public string GetNameFromPath(string path)
+        {
+            return path.Substring(path.LastIndexOf('/') + 1);
         }
     }
 }
