@@ -56,9 +56,9 @@ namespace FileSystem.Tree
             return result;
         }
 
-        public void Cd(string name)
+        public void Cd(ObjectDescriptor descriptor)
         {
-            var treeObject = GetTreeObject(GetPath(name));
+            var treeObject = GetTreeObject(descriptor.Path);
             if (treeObject == null) return;
             CWD = treeObject;
         }
@@ -92,10 +92,9 @@ namespace FileSystem.Tree
             return parent.AddChildren(new TreeObject(descriptor, parent));
         }
 
-        public bool RemoveTreeObject(string name)
+        public bool RemoveTreeObject(ObjectDescriptor descriptor)
         {
-            var path = GetPath(name);
-            var treeObject = GetTreeObject(path);
+            var treeObject = GetTreeObject(descriptor.Path);
             if (treeObject.Children.Count > 0) return false;
             treeObject.Parent.RemoveChildren(treeObject);
             if (treeObject == CWD) CWD = null;
