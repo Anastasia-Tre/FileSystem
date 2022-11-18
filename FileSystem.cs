@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.Linq;
 using FileSystem.Descriptors;
 using FileSystem.Tree;
 
@@ -24,6 +25,18 @@ namespace FileSystem
                 return;
             }
             Console.WriteLine($"No object with the name {name} in system");
+        }
+
+        public void RenameObject(string oldName, string newName)
+        {
+            var descriptor = _tree.GetObjectDescriptor(oldName);
+            if (descriptor != null)
+            {
+                descriptor.Rename(newName);
+                Console.WriteLine($"Object {oldName} was rename to {newName}");
+                return;
+            }
+            Console.WriteLine($"No object with the name {oldName} in system");
         }
 
         #region file methods

@@ -137,11 +137,16 @@ namespace FileSystem
             fs.CreateFile("/some");
             fs.OpenFile("/dir1/dir2/data.txt");
 
+
+
             Console.WriteLine();
             fs.MakeDir("/1");
             fs.MakeDir("/1/2");
-            fs.Cd("/1/2");
-            fs.RmDir("../2");
+
+            fs.RenameObject("/1/2", "3");
+
+            fs.Cd("/1/3");
+            fs.RmDir("../3");
             fs.Ls();
             fs.CreateFile("file.txt");
 
