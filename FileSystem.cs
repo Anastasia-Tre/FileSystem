@@ -187,7 +187,7 @@ namespace FileSystem
             Console.WriteLine($"{treeObject.Parent.Descriptor.Type},{treeObject.Parent.Descriptor.Id}   =>   ..");
 
             foreach (var obj in _tree.Ls(treeObject))
-            foreach (var link in obj.Links.Where(link => link.StartsWith(dirname)))
+            foreach (var link in obj.Links.Where(link => link.StartsWith(treeObject.Parent.Descriptor.Path)))
                 Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
         }
 
