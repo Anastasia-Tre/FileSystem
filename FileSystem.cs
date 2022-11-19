@@ -8,10 +8,12 @@ namespace FileSystem
     internal class FileSystem
     {
         private readonly FileTree _tree;
+        private DirDescriptor CWD;
 
         public FileSystem(int maxDescrNumber)
         {
-            _tree = new FileTree(new DirDescriptor("/", null), maxDescrNumber);
+            CWD = new DirDescriptor("/", null);
+            _tree = new FileTree(CWD, maxDescrNumber);
             Console.WriteLine("The file system was created");
         }
 
@@ -162,14 +164,14 @@ namespace FileSystem
 
         public void Ls(string name = null)
         {
-            if (_tree.CWD == null)
+            if (_tree.CurrentDir == null)
             {
                 Console.WriteLine("No such directory");
                 return;
             }
 
             var dirname = name == null
-                ? _tree.CWD.Descriptor.Path
+                ? CWD.Path
                 : _tree.GetPath(name);
 
             var treeObject = _tree.GetTreeObject(dirname);
@@ -192,7 +194,7 @@ namespace FileSystem
         public void MakeDir(string name)
         {
             if (!_tree.CanObjectBeCreated(name)) return;
-            var pathCWD = _tree.CWD.Descriptor;
+            var pathCWD = CWD;
             if (name.StartsWith('/')) _tree.Cd(_tree.GetObjectDescriptor("/"));
             var names = name.Split('/');
             foreach (var dirName in names)
@@ -208,7 +210,7 @@ namespace FileSystem
             var path = _tree.GetPath(name);
             var dir = (DirDescriptor)_tree.GetObjectDescriptor(name);
             if (dir != null) return dir;
-            dir = new DirDescriptor(path, (DirDescriptor)_tree.CWD.Descriptor);
+            dir = new DirDescriptor(path, CWD);
             _tree.AddTreeObject(dir);
             Console.WriteLine($"The directory {name} was created");
             return dir;
@@ -224,8 +226,8 @@ namespace FileSystem
 
         public void Cd(string name)
         {
-            _tree.Cd(_tree.GetObjectDescriptor(name));
-            Console.WriteLine($"Change CWD to {_tree.CWD.Descriptor.Path}");
+            CWD = _tree.Cd(_tree.GetObjectDescriptor(name));
+            Console.WriteLine($"Change _currentDir to {CWD.Path}");
         }
 
         public void Symlink(string objectName, string pathname)

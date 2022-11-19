@@ -137,8 +137,6 @@ namespace FileSystem
             fs.CreateFile("/some");
             fs.OpenFile("/dir1/dir2/data.txt");
 
-
-
             Console.WriteLine();
             fs.MakeDir("/1");
             fs.MakeDir("/1/2");
