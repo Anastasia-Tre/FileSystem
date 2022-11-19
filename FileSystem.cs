@@ -243,7 +243,7 @@ namespace FileSystem
         public void Cd(string name)
         {
             CWD = _tree.Cd(_tree.GetObjectDescriptor(name));
-            Console.WriteLine($"Change _currentDir to {CWD.Path}");
+            Console.WriteLine($"Change CWD to {CWD.Path}");
         }
 
         public void Symlink(string objectName, string pathname)

@@ -12,7 +12,6 @@ namespace FileSystem.Descriptors
         protected ObjectDescriptor(string path)
         {
             Id = NextId++;
-            Name = GetNameFromPath(path);
             Path = path;
             Links = new List<string> { path };
             Nlink++;
@@ -20,7 +19,6 @@ namespace FileSystem.Descriptors
 
         public ObjectDescriptors Type { get; protected set; }
         public int Id { get; }
-        public string Name { get; private set; }
         public string Path { get; private set; }
 
         public abstract string Stat();
@@ -48,7 +46,6 @@ namespace FileSystem.Descriptors
             Links.Remove(Path);
             pathFrom ??= Path;
             Path = Path.Replace(pathFrom, pathTo);
-            Name = GetNameFromPath(Path);
             Links.Add(Path);
         }
 
