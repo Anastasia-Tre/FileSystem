@@ -53,6 +53,22 @@ namespace FileSystem
             Console.WriteLine($"No object with the name {from} in system");
         }
 
+        public ObjectDescriptor ObjectNameLookup(string name, bool openSymLink = false)
+        {
+            var path = _tree.GetPath(name);
+            var descriptor = _tree.GetObjectDescriptor(path);
+            if (descriptor != null)
+            {
+                if (descriptor is SymLinkDescriptor symLinkDescriptor && openSymLink)
+                {
+                    return symLinkDescriptor.LinkedObject;
+                }
+                return descriptor;
+            }
+            Console.WriteLine($"No object with the name {name} in system");
+            return null;
+        }
+
         #region file methods
 
         public FileDescriptor CreateFile(string name)

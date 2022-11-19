@@ -8,7 +8,6 @@ namespace FileSystem
         {
             var fs = new FileSystem(100);
 
-            /*
             #region lab4
 
             Console.WriteLine();
@@ -157,7 +156,10 @@ namespace FileSystem
             fs.Ls();
             fs.CreateFile("file.txt");
 
-            */
+            #endregion
+
+            /*
+            #region test SymLInk
 
             Console.WriteLine();
             fs.MakeDir("/some/dir/dir4/dir2");
@@ -179,9 +181,9 @@ namespace FileSystem
             fs.ShowStat("/some/dir/dir4/dir2/somefile.txt");
             fs.OpenFile("/dir1/slink1/dir2/somefile.txt");
 
-            //#endregion
+            #endregion
 
-
+            */
 
         }
     }
