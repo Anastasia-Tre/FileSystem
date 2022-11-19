@@ -12,7 +12,6 @@ namespace FileSystem.Descriptors
         protected ObjectDescriptor(string path)
         {
             Id = NextId++;
-            Name = GetNameFromPath(path);
             Path = path;
             Links = new List<string> { path };
             Nlink++;
@@ -20,8 +19,7 @@ namespace FileSystem.Descriptors
 
         public ObjectDescriptors Type { get; protected set; }
         public int Id { get; }
-        public string Name { get; }
-        public string Path { get; }
+        public string Path { get; private set; }
 
         public abstract string Stat();
         public abstract string GetType();
@@ -41,6 +39,22 @@ namespace FileSystem.Descriptors
         public string GetNameFromPath(string path)
         {
             return path.Substring(path.LastIndexOf('/') + 1);
+        }
+
+        public void Rename(string pathTo, string pathFrom = null)
+        {
+            Links.Remove(Path);
+            pathFrom ??= Path;
+            Path = Path.Replace(pathFrom, pathTo);
+            Links.Add(Path);
+        }
+
+        public void Move(string from, string to)
+        {
+            var name = GetNameFromPath(from);
+            Links.Remove(Path);
+            Path = $"{to}/{name}";
+            Links.Add(Path);
         }
     }
 }

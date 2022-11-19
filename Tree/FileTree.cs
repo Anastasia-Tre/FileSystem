@@ -12,14 +12,14 @@ namespace FileSystem.Tree
         private readonly int _maxFileNameLength = 128;
         private readonly TreeObject _rootTreeObject;
 
-        public TreeObject CWD;
+        public TreeObject CurrentDir;
 
         public FileTree(ObjectDescriptor rootDescriptor, int maxDescrNumber)
         {
             _maxDescriptorsNumber = maxDescrNumber;
             _rootTreeObject = new TreeObject(rootDescriptor, null);
             _rootTreeObject.Parent = _rootTreeObject;
-            CWD = _rootTreeObject;
+            CurrentDir = _rootTreeObject;
         }
 
         public ObjectDescriptor GetObjectDescriptor(string name)
@@ -31,9 +31,9 @@ namespace FileSystem.Tree
         public string GetPath(string name)
         {
             if (name.StartsWith('/')) return name;
-            return CWD.Descriptor.Path == "/"
+            return CurrentDir.Descriptor.Path == "/"
                 ? $"/{name}"
-                : $"{CWD.Descriptor.Path}/{name}";
+                : $"{CurrentDir.Descriptor.Path}/{name}";
         }
 
         public TreeObject GetTreeObject(string path)
@@ -56,11 +56,12 @@ namespace FileSystem.Tree
             return result;
         }
 
-        public void Cd(string name)
+        public DirDescriptor Cd(ObjectDescriptor descriptor)
         {
-            var treeObject = GetTreeObject(GetPath(name));
-            if (treeObject == null) return;
-            CWD = treeObject;
+            var treeObject = GetTreeObject(descriptor.Path);
+            if (treeObject == null) return null;
+            CurrentDir = treeObject;
+            return (DirDescriptor)CurrentDir.Descriptor;
         }
 
         public List<ObjectDescriptor> Ls(TreeObject startObject)
@@ -92,20 +93,41 @@ namespace FileSystem.Tree
             return parent.AddChildren(new TreeObject(descriptor, parent));
         }
 
-        public bool RemoveTreeObject(string name)
+        public bool RemoveTreeObject(ObjectDescriptor descriptor)
         {
-            var path = GetPath(name);
-            var treeObject = GetTreeObject(path);
+            var treeObject = GetTreeObject(descriptor.Path);
             if (treeObject.Children.Count > 0) return false;
             treeObject.Parent.RemoveChildren(treeObject);
-            if (treeObject == CWD) CWD = null;
+            if (treeObject == CurrentDir) CurrentDir = null;
             _objectNumber--;
             return true;
         }
 
+        public void MoveTreeObject(ObjectDescriptor descriptor, string to)
+        {
+            var path = GetPath(to);
+            var treeObject = GetTreeObject(descriptor.Path);
+
+            treeObject.Parent.RemoveChildren(treeObject);
+            treeObject.Parent = GetTreeObject(path);
+            treeObject.Parent.AddChildren(treeObject);
+        }
+
+        public void RenameTreeObject(ObjectDescriptor descriptor,
+            string newName)
+        {
+            var treeObject = GetTreeObject(descriptor.Path);
+            var newPath = GetPath(newName);
+            foreach (var child in treeObject.Children)
+            {
+                child.Descriptor.Rename(newPath, descriptor.Path);
+            }
+            descriptor.Rename(newPath);
+        }
+
         public bool CanObjectBeCreated(string name)
         {
-            if (CWD == null)
+            if (CurrentDir == null)
             {
                 Console.WriteLine("No such directory");
                 return false;

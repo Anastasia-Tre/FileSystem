@@ -8,10 +8,12 @@ namespace FileSystem
     internal class FileSystem
     {
         private readonly FileTree _tree;
+        private DirDescriptor CWD;
 
         public FileSystem(int maxDescrNumber)
         {
-            _tree = new FileTree(new DirDescriptor("/", null), maxDescrNumber);
+            CWD = new DirDescriptor("/", null);
+            _tree = new FileTree(CWD, maxDescrNumber);
             Console.WriteLine("The file system was created");
         }
 
@@ -24,6 +26,47 @@ namespace FileSystem
                 return;
             }
             Console.WriteLine($"No object with the name {name} in system");
+        }
+
+        public void RenameObject(string oldName, string newName)
+        {
+            var descriptor = _tree.GetObjectDescriptor(oldName);
+            if (descriptor != null)
+            {
+                _tree.RenameTreeObject(descriptor, newName);
+                Console.WriteLine($"Object {oldName} was renamed to {newName}");
+                return;
+            }
+            Console.WriteLine($"No object with the name {oldName} in system");
+        }
+
+        public void MoveObject(string from, string to)
+        {
+            var descriptor = _tree.GetObjectDescriptor(from);
+            if (descriptor != null)
+            {
+                _tree.MoveTreeObject(descriptor, to);
+                descriptor.Rename(_tree.GetPath(from), _tree.GetPath(to));
+                Console.WriteLine($"Object {from} was moved to {to}");
+                return;
+            }
+            Console.WriteLine($"No object with the name {from} in system");
+        }
+
+        public ObjectDescriptor ObjectNameLookup(string name, bool openSymLink = false)
+        {
+            var path = _tree.GetPath(name);
+            var descriptor = _tree.GetObjectDescriptor(path);
+            if (descriptor != null)
+            {
+                if (descriptor is SymLinkDescriptor symLinkDescriptor && openSymLink)
+                {
+                    return symLinkDescriptor.LinkedObject;
+                }
+                return descriptor;
+            }
+            Console.WriteLine($"No object with the name {name} in system");
+            return null;
         }
 
         #region file methods
@@ -75,7 +118,8 @@ namespace FileSystem
         public void Unlink(string name)
         {
             var path = _tree.GetPath(name);
-            switch (_tree.GetObjectDescriptor(name))
+            var descriptor = _tree.GetObjectDescriptor(name);
+            switch (descriptor)
             {
                 case DirDescriptor:
                     Console.WriteLine("Unlink for directories is not allowed");
@@ -84,12 +128,12 @@ namespace FileSystem
                     if (fileDescriptor.CanBeRemoved())
                     {
                         FileHandler.RemoveFile(fileDescriptor);
-                        _tree.RemoveTreeObject(path);
+                        _tree.RemoveTreeObject(descriptor);
                     }
                     fileDescriptor.RemoveLink(path);
                     break;
                 case SymLinkDescriptor symLinkDescriptor:
-                    _tree.RemoveTreeObject(path);
+                    _tree.RemoveTreeObject(descriptor);
                     symLinkDescriptor.RemoveLink(path);
                     break;
             }
@@ -136,14 +180,14 @@ namespace FileSystem
 
         public void Ls(string name = null)
         {
-            if (_tree.CWD == null)
+            if (_tree.CurrentDir == null)
             {
                 Console.WriteLine("No such directory");
                 return;
             }
 
             var dirname = name == null
-                ? _tree.CWD.Descriptor.Path
+                ? CWD.Path
                 : _tree.GetPath(name);
 
             var treeObject = _tree.GetTreeObject(dirname);
@@ -159,48 +203,47 @@ namespace FileSystem
             Console.WriteLine($"{treeObject.Parent.Descriptor.Type},{treeObject.Parent.Descriptor.Id}   =>   ..");
 
             foreach (var obj in _tree.Ls(treeObject))
-            foreach (var link in obj.Links.Where(link => link.StartsWith(dirname)))
+            foreach (var link in obj.Links.Where(link => link.StartsWith(treeObject.Parent.Descriptor.Path)))
                 Console.WriteLine($"{obj.GetType()}   =>   {obj.GetNameFromPath(link)}");
         }
 
         public void MakeDir(string name)
         {
             if (!_tree.CanObjectBeCreated(name)) return;
-            var pathCWD = _tree.CWD.Descriptor.Path;
-            if (name.StartsWith('/')) _tree.Cd("/");
+            var pathCWD = CWD;
+            if (name.StartsWith('/')) _tree.Cd(_tree.GetObjectDescriptor("/"));
             var names = name.Split('/');
             foreach (var dirName in names)
             {
-                CreateDir(dirName);
-                _tree.Cd(dirName);
+                _tree.Cd(CreateDir(dirName));
             }
             _tree.Cd(pathCWD);
         }
 
-        private void CreateDir(string name)
+        private DirDescriptor CreateDir(string name)
         {
-            if (!_tree.CanObjectBeCreated(name)) return;
+            if (!_tree.CanObjectBeCreated(name)) return null;
             var path = _tree.GetPath(name);
-            if (_tree.GetObjectDescriptor(name) == null)
-            {
-                var dir = new DirDescriptor(path, (DirDescriptor)_tree.CWD.Descriptor);
-                _tree.AddTreeObject(dir);
-                Console.WriteLine($"The directory {name} was created");
-            }
+            var dir = (DirDescriptor)_tree.GetObjectDescriptor(name);
+            if (dir != null) return dir;
+            dir = new DirDescriptor(path, CWD);
+            _tree.AddTreeObject(dir);
+            Console.WriteLine($"The directory {name} was created");
+            return dir;
         }
 
         public void RmDir(string name)
         {
             if (!_tree.CanObjectBeCreated(name)) return;
-            if (_tree.RemoveTreeObject(name))
+            if (_tree.RemoveTreeObject(_tree.GetObjectDescriptor(name)))
                 Console.WriteLine($"The directory {name} was deleted");
             else Console.WriteLine($"The directory {name} can not be deleted");
         }
 
         public void Cd(string name)
         {
-            _tree.Cd(name);
-            Console.WriteLine($"Change CWD to {_tree.CWD.Descriptor.Path}");
+            CWD = _tree.Cd(_tree.GetObjectDescriptor(name));
+            Console.WriteLine($"Change CWD to {CWD.Path}");
         }
 
         public void Symlink(string objectName, string pathname)

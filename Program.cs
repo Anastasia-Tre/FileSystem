@@ -140,12 +140,51 @@ namespace FileSystem
             Console.WriteLine();
             fs.MakeDir("/1");
             fs.MakeDir("/1/2");
-            fs.Cd("/1/2");
-            fs.RmDir("../2");
+
+            Console.WriteLine();
+            fs.CreateFile("/1/2/filein2.txt");
+            fs.RenameObject("/1/2", "/1/3");
+            fs.Ls("/1/3");
+
+            fs.MoveObject("/1/3/filein2.txt", "/1");
+            fs.Ls("/1/3");
+            fs.Ls("/1");
+
+            Console.WriteLine();
+            fs.Cd("/1/3");
+            fs.RmDir("../3");
             fs.Ls();
             fs.CreateFile("file.txt");
 
             #endregion
+
+            /*
+            #region test SymLInk
+
+            Console.WriteLine();
+            fs.MakeDir("/some/dir/dir4/dir2");
+            fs.CreateFile("/some/dir/dir4/dir2/somefile.txt");
+            fs.Ls("/some/dir/dir4/dir2");
+
+            Console.WriteLine();
+            fs.MakeDir("/some/dir");
+            fs.MakeDir("/dir1/dir3");
+            fs.Symlink("/some/dir", "/dir1/dir3/slink2");
+            fs.Ls("/dir1/dir3");
+
+            Console.WriteLine();
+            fs.Symlink("/dir1/dir3/slink2/dir4", "/dir1/slink1");
+            fs.Ls("/dir1");
+
+            Console.WriteLine();
+            fs.ShowStat("/dir1/slink1/dir2/somefile.txt");
+            fs.ShowStat("/some/dir/dir4/dir2/somefile.txt");
+            fs.OpenFile("/dir1/slink1/dir2/somefile.txt");
+
+            #endregion
+
+            */
+
         }
     }
 }
