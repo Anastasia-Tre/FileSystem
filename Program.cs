@@ -143,8 +143,16 @@ namespace FileSystem
             fs.MakeDir("/1");
             fs.MakeDir("/1/2");
 
-            fs.RenameObject("/1/2", "3");
+            Console.WriteLine();
+            fs.CreateFile("/1/2/filein2.txt");
+            fs.RenameObject("/1/2", "/1/3");
+            fs.Ls("/1/3");
 
+            fs.MoveObject("/1/3/filein2.txt", "/1");
+            fs.Ls("/1/3");
+            fs.Ls("/1");
+
+            Console.WriteLine();
             fs.Cd("/1/3");
             fs.RmDir("../3");
             fs.Ls();

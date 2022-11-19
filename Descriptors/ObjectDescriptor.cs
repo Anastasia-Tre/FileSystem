@@ -43,11 +43,20 @@ namespace FileSystem.Descriptors
             return path.Substring(path.LastIndexOf('/') + 1);
         }
 
-        public void Rename(string name)
+        public void Rename(string pathTo, string pathFrom = null)
         {
             Links.Remove(Path);
-            Path = $"{Path.Remove(Path.IndexOf(Name))}{name}";
-            Name = name;
+            pathFrom ??= Path;
+            Path = Path.Replace(pathFrom, pathTo);
+            Name = GetNameFromPath(Path);
+            Links.Add(Path);
+        }
+
+        public void Move(string from, string to)
+        {
+            var name = GetNameFromPath(from);
+            Links.Remove(Path);
+            Path = $"{to}/{name}";
             Links.Add(Path);
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.Linq;
 using FileSystem.Descriptors;
 using FileSystem.Tree;
 
@@ -32,11 +31,24 @@ namespace FileSystem
             var descriptor = _tree.GetObjectDescriptor(oldName);
             if (descriptor != null)
             {
-                descriptor.Rename(newName);
-                Console.WriteLine($"Object {oldName} was rename to {newName}");
+                _tree.RenameTreeObject(descriptor, newName);
+                Console.WriteLine($"Object {oldName} was renamed to {newName}");
                 return;
             }
             Console.WriteLine($"No object with the name {oldName} in system");
+        }
+
+        public void MoveObject(string from, string to)
+        {
+            var descriptor = _tree.GetObjectDescriptor(from);
+            if (descriptor != null)
+            {
+                _tree.MoveTreeObject(descriptor, to);
+                descriptor.Rename(_tree.GetPath(from), _tree.GetPath(to));
+                Console.WriteLine($"Object {from} was moved to {to}");
+                return;
+            }
+            Console.WriteLine($"No object with the name {from} in system");
         }
 
         #region file methods

@@ -102,6 +102,28 @@ namespace FileSystem.Tree
             return true;
         }
 
+        public void MoveTreeObject(ObjectDescriptor descriptor, string to)
+        {
+            var path = GetPath(to);
+            var treeObject = GetTreeObject(descriptor.Path);
+
+            treeObject.Parent.RemoveChildren(treeObject);
+            treeObject.Parent = GetTreeObject(path);
+            treeObject.Parent.AddChildren(treeObject);
+        }
+
+        public void RenameTreeObject(ObjectDescriptor descriptor,
+            string newName)
+        {
+            var treeObject = GetTreeObject(descriptor.Path);
+            var newPath = GetPath(newName);
+            foreach (var child in treeObject.Children)
+            {
+                child.Descriptor.Rename(newPath, descriptor.Path);
+            }
+            descriptor.Rename(newPath);
+        }
+
         public bool CanObjectBeCreated(string name)
         {
             if (CWD == null)
